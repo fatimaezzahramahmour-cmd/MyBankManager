@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Connection - MyBankManager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test de Connexion API MyBankManager</h1>
+    
+    <div class="container">
+        <h2>1. Test de Connexion au Serveur</h2>
+        <div class="test-section info">
+            <button onclick="testServerConnection()">Tester la Connexion Serveur</button>
+            <div id="server-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>2. Test d'Inscription Utilisateur</h2>
+        <div class="test-section">
+            <input type="text" id="test-email" placeholder="Email de test" value="test@example.com">
+            <input type="text" id="test-name" placeholder="Nom complet" value="Utilisateur Test">
+            <input type="password" id="test-password" placeholder="Mot de passe" value="password123">
+            <input type="password" id="test-confirm" placeholder="Confirmer mot de passe" value="password123">
+            <button onclick="testRegistration()">Tester l'Inscription</button>
+            <div id="registration-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>3. Test de Connexion Utilisateur</h2>
+        <div class="test-section">
+            <input type="text" id="login-email" placeholder="Email" value="test@example.com">
+            <input type="password" id="login-password" placeholder="Mot de passe" value="password123">
+            <button onclick="testLogin()">Tester la Connexion</button>
+            <div id="login-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>4. Test Admin</h2>
+        <div class="test-section">
+            <button onclick="testAdminLogin()">Tester Connexion Admin</button>
+            <div id="admin-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>5. État du localStorage</h2>
+        <div class="test-section">
+            <button onclick="checkLocalStorage()">Vérifier localStorage</button>
+            <div id="storage-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8081';
+
+        async function testServerConnection() {
+            const resultDiv = document.getElementById('server-result');
+            resultDiv.textContent = '🔄 Test en cours...';
+            resultDiv.className = 'result info';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/test`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.textContent = `✅ Serveur connecté!\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.textContent = `❌ Erreur serveur: ${response.status}\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ Erreur de connexion: ${error.message}\n\nVérifiez que le serveur est démarré avec:\nstart_mybankmanager_complete.bat`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testRegistration() {
+            const resultDiv = document.getElementById('registration-result');
+            const email = document.getElementById('test-email').value;
+            const name = document.getElementById('test-name').value;
+            const password = document.getElementById('test-password').value;
+            const confirmPassword = document.getElementById('test-confirm').value;
+
+            resultDiv.textContent = '🔄 Inscription en cours...';
+            resultDiv.className = 'result info';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        fullName: name,
+                        password: password,
+                        confirmPassword: confirmPassword
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    resultDiv.textContent = `✅ Inscription réussie!\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.textContent = `❌ Erreur d'inscription: ${data.message}\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ Erreur: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testLogin() {
+            const resultDiv = document.getElementById('login-result');
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            resultDiv.textContent = '🔄 Connexion en cours...';
+            resultDiv.className = 'result info';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    resultDiv.textContent = `✅ Connexion réussie!\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.textContent = `❌ Erreur de connexion: ${data.message}\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ Erreur: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testAdminLogin() {
+            const resultDiv = document.getElementById('admin-result');
+            resultDiv.textContent = '🔄 Test admin en cours...';
+            resultDiv.className = 'result info';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'admin@mybankmanager.com',
+                        password: 'admin123'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    resultDiv.textContent = `✅ Connexion admin réussie!\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.textContent = `❌ Erreur admin: ${data.message}\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ Erreur: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        function checkLocalStorage() {
+            const resultDiv = document.getElementById('storage-result');
+            const currentUser = localStorage.getItem('currentUser');
+            const authToken = localStorage.getItem('authToken');
+            const users = localStorage.getItem('users');
+
+            let result = '📊 État du localStorage:\n\n';
+            result += `currentUser: ${currentUser ? '✅ Présent' : '❌ Absent'}\n`;
+            result += `authToken: ${authToken ? '✅ Présent' : '❌ Absent'}\n`;
+            result += `users: ${users ? '✅ Présent' : '❌ Absent'}\n\n`;
+
+            if (currentUser) {
+                try {
+                    const user = JSON.parse(currentUser);
+                    result += `Utilisateur connecté:\n${JSON.stringify(user, null, 2)}\n\n`;
+                } catch (e) {
+                    result += `Erreur parsing currentUser: ${e.message}\n\n`;
+                }
+            }
+
+            if (users) {
+                try {
+                    const usersList = JSON.parse(users);
+                    result += `Utilisateurs enregistrés: ${usersList.length}\n`;
+                    usersList.forEach((user, index) => {
+                        result += `${index + 1}. ${user.email} (${user.fullName || user.nom})\n`;
+                    });
+                } catch (e) {
+                    result += `Erreur parsing users: ${e.message}\n`;
+                }
+            }
+
+            resultDiv.textContent = result;
+            resultDiv.className = 'result info';
+        }
+
+        // Test automatique au chargement
+        window.addEventListener('load', () => {
+            setTimeout(testServerConnection, 1000);
+        });
+    </script>
+</body>
+</html>

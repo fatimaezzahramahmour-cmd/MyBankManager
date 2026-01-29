@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Timer - MyBankManager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .timer-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 20px 0;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+        }
+        .message-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 600px;
+            margin: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+        .countdown {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Timer</h1>
+    
+    <div class="test-panel">
+        <h2>Test du Compteur</h2>
+        <button class="btn" onclick="testTimer()">Tester Timer 1.5s</button>
+        <button class="btn" onclick="testSuccessMessage()">Tester Message de Succès</button>
+        
+        <div class="timer-display" id="timer-display">
+            Timer: 0.0s
+        </div>
+    </div>
+
+    <script>
+        function testTimer() {
+            let countdown = 1.5;
+            const display = document.getElementById('timer-display');
+            
+            console.log('⏱️ Démarrage du test timer:', countdown);
+            
+            const interval = setInterval(() => {
+                countdown -= 0.5;
+                console.log('⏱️ Timer:', countdown);
+                
+                display.textContent = `Timer: ${countdown.toFixed(1)}s`;
+                display.style.color = countdown <= 0.5 ? '#dc3545' : '#007bff';
+                
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    console.log('✅ Timer terminé');
+                    display.textContent = 'Timer: Terminé!';
+                    display.style.color = '#28a745';
+                }
+            }, 500);
+        }
+        
+        function testSuccessMessage() {
+            // Créer l'overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            
+            const messageBox = document.createElement('div');
+            messageBox.className = 'message-box';
+            
+            messageBox.innerHTML = `
+                <div style="font-size: 64px; color: #28a745; margin-bottom: 20px;">✅</div>
+                <h2 style="color: #28a745; margin-bottom: 20px; font-size: 24px;">Message envoyé avec succès</h2>
+                <p style="font-size: 18px; line-height: 1.6; color: #333; margin-bottom: 20px;">
+                    Veuillez attendre une réponse dans les plus brefs délais.
+                </p>
+                <div style="font-size: 16px; color: #666; margin-top: 20px;">
+                    Redirection vers l'accueil dans <span id="countdown" class="countdown">1.5</span> secondes...
+                </div>
+            `;
+            
+            overlay.appendChild(messageBox);
+            document.body.appendChild(overlay);
+            
+            // Compteur de redirection
+            let countdown = 1.5;
+            const countdownElement = document.getElementById('countdown');
+            
+            console.log('⏱️ Démarrage du compteur:', countdown);
+            
+            const countdownInterval = setInterval(() => {
+                countdown -= 0.5;
+                console.log('⏱️ Compteur:', countdown);
+                
+                if (countdownElement) {
+                    countdownElement.textContent = countdown.toFixed(1);
+                    countdownElement.style.color = countdown <= 0.5 ? '#dc3545' : '#007bff';
+                }
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    console.log('🔄 Redirection vers l\'accueil...');
+                    overlay.remove();
+                    alert('Redirection vers l\'accueil!');
+                }
+            }, 500);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Fix XHR - MyBankManager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ffd700;
+        }
+        .test-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+        .btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .result {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { border-left-color: #28a745; }
+        .error { border-left-color: #dc3545; }
+        .loading { border-left-color: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test Fix XHR - MyBankManager</h1>
+        
+        <div class="test-section">
+            <h3>🚀 Test de Connexion Backend</h3>
+            <button class="btn" onclick="testBackend()">Tester la Connexion</button>
+            <div id="backend-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>👥 Test Dashboard Admin</h3>
+            <button class="btn" onclick="testAdminDashboard()">Tester Dashboard Admin</button>
+            <div id="admin-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>👤 Test Utilisateurs Admin</h3>
+            <button class="btn" onclick="testAdminUsers()">Tester Utilisateurs Admin</button>
+            <div id="users-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔄 Test Complet</h3>
+            <button class="btn" onclick="runCompleteTest()">Lancer Test Complet</button>
+            <div id="complete-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🧹 Nettoyer</h3>
+            <button class="btn btn-danger" onclick="clearResults()">Effacer les Résultats</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8081/api';
+        
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            element.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            element.scrollTop = element.scrollHeight;
+        }
+
+        async function testBackend() {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.textContent = '';
+            resultDiv.className = 'result loading';
+            
+            try {
+                log('backend-result', 'Test de connexion au backend...');
+                const response = await fetch(`${API_BASE}/test`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                resultDiv.className = 'result success';
+                log('backend-result', `✅ Connexion réussie!`);
+                log('backend-result', `📊 Données reçues: ${JSON.stringify(data, null, 2)}`);
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                log('backend-result', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAdminDashboard() {
+            const resultDiv = document.getElementById('admin-result');
+            resultDiv.textContent = '';
+            resultDiv.className = 'result loading';
+            
+            try {
+                log('admin-result', 'Test du dashboard admin...');
+                const response = await fetch(`${API_BASE}/admin/dashboard`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                resultDiv.className = 'result success';
+                log('admin-result', `✅ Dashboard admin accessible!`);
+                log('admin-result', `📊 Données: ${JSON.stringify(data, null, 2)}`);
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                log('admin-result', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAdminUsers() {
+            const resultDiv = document.getElementById('users-result');
+            resultDiv.textContent = '';
+            resultDiv.className = 'result loading';
+            
+            try {
+                log('users-result', 'Test des utilisateurs admin...');
+                const response = await fetch(`${API_BASE}/admin/users`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                resultDiv.className = 'result success';
+                log('users-result', `✅ Utilisateurs admin récupérés!`);
+                log('users-result', `📊 Données: ${JSON.stringify(data, null, 2)}`);
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                log('users-result', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function runCompleteTest() {
+            const resultDiv = document.getElementById('complete-result');
+            resultDiv.textContent = '';
+            resultDiv.className = 'result loading';
+            
+            log('complete-result', '🚀 Démarrage du test complet...');
+            
+            const tests = [
+                { name: 'Connexion Backend', endpoint: '/test' },
+                { name: 'Dashboard Admin', endpoint: '/admin/dashboard' },
+                { name: 'Utilisateurs Admin', endpoint: '/admin/users' },
+                { name: 'Prêts Admin', endpoint: '/admin/loans' }
+            ];
+            
+            let successCount = 0;
+            let totalTests = tests.length;
+            
+            for (const test of tests) {
+                try {
+                    log('complete-result', `🔍 Test: ${test.name}...`);
+                    const response = await fetch(`${API_BASE}${test.endpoint}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    log('complete-result', `✅ ${test.name}: OK`);
+                    successCount++;
+                    
+                } catch (error) {
+                    log('complete-result', `❌ ${test.name}: ÉCHEC - ${error.message}`, 'error');
+                }
+            }
+            
+            resultDiv.className = successCount === totalTests ? 'result success' : 'result error';
+            log('complete-result', `📊 Résultat: ${successCount}/${totalTests} tests réussis`);
+            
+            if (successCount === totalTests) {
+                log('complete-result', '🎉 Tous les tests sont passés! Le fix XHR fonctionne!');
+            } else {
+                log('complete-result', '⚠️ Certains tests ont échoué. Vérifiez les erreurs ci-dessus.');
+            }
+        }
+
+        function clearResults() {
+            document.querySelectorAll('.result').forEach(el => {
+                el.textContent = '';
+                el.className = 'result';
+            });
+        }
+
+        // Test automatique au chargement
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('backend-result', '🔄 Test automatique au chargement...');
+                testBackend();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

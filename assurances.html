@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assurances - MyBankManager</title>
+    <link rel="stylesheet" href="professional-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <span>MyBankManager</span>
+                </div>
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Accueil</a></li>
+                        <li><a href="comptes.html" class="nav-link">Comptes</a></li>
+                        <li><a href="prets.html" class="nav-link">Prêts</a></li>
+                        <li><a href="cartes.html" class="nav-link">Cartes</a></li>
+                        <li><a href="assurances.html" class="nav-link active">Assurances</a></li>
+                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions" id="header-actions">
+                    <a href="connexion.html" class="btn btn-outline">Se connecter</a>
+                    <a href="inscription.html" class="btn btn-primary">S'inscrire</a>
+                </div>
+                <div class="nav-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">Nos Assurances</h1>
+                    <p class="hero-description">Protégez-vous et vos proches avec nos offres d'assurance complètes et adaptées à tous vos besoins.</p>
+                    <div class="hero-actions">
+                        <a href="#offres" class="btn btn-primary btn-large">Découvrir nos offres</a>
+                        <a href="#simulateur" class="btn btn-outline btn-large">Simuler une cotisation</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="banking-card">
+                        <div class="card-chip"></div>
+                        <div class="card-number">Assurance MyBank</div>
+                        <div class="card-holder">Protection Totale</div>
+                        <div class="card-type">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Offres d'Assurance Section -->
+    <section class="offres-assurance" id="offres">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Nos Offres d'Assurance</h2>
+                <p class="section-description">Des solutions de protection adaptées à tous vos besoins</p>
+            </div>
+            
+            <div class="offres-grid">
+                <!-- Assurance Automobile -->
+                <div class="offre-card">
+                    <div class="offre-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <h3>Assurance Automobile</h3>
+                    <p class="offre-description">Protection complète pour votre véhicule avec des garanties étendues et un service d'assistance 24/7.</p>
+                    <div class="offre-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Responsabilité civile</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Vol et incendie</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Assistance dépannage</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Protection juridique</span>
+                        </div>
+                    </div>
+                    <div class="offre-price">
+                        <span class="price">À partir de 25 DH/mois</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="demanderAssurance('auto')">
+                        <i class="fas fa-shield-alt"></i> Demander un devis
+                    </button>
+                </div>
+
+                <!-- Assurance Habitation -->
+                <div class="offre-card">
+                    <div class="offre-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>Assurance Habitation</h3>
+                    <p class="offre-description">Protégez votre logement et vos biens contre tous les risques avec une couverture complète.</p>
+                    <div class="offre-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Incendie et dégâts</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Vol et vandalisme</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Catastrophes naturelles</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Responsabilité civile</span>
+                        </div>
+                    </div>
+                    <div class="offre-price">
+                        <span class="price">À partir de 15 DH/mois</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="demanderAssurance('habitation')">
+                        <i class="fas fa-shield-alt"></i> Demander un devis
+                    </button>
+                </div>
+
+                <!-- Assurance Santé -->
+                <div class="offre-card">
+                    <div class="offre-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3>Assurance Santé</h3>
+                    <p class="offre-description">Complétez votre couverture santé avec des garanties adaptées à vos besoins médicaux.</p>
+                    <div class="offre-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Hospitalisation</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Consultations spécialisées</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Médicaments</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Soins dentaires</span>
+                        </div>
+                    </div>
+                    <div class="offre-price">
+                        <span class="price">À partir de 45 DH/mois</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="demanderAssurance('sante')">
+                        <i class="fas fa-shield-alt"></i> Demander un devis
+                    </button>
+                </div>
+
+                <!-- Assurance Vie -->
+                <div class="offre-card">
+                    <div class="offre-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Assurance Vie</h3>
+                    <p class="offre-description">Préparez l'avenir de vos proches avec une épargne sécurisée et des garanties de décès.</p>
+                    <div class="offre-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Capital décès</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Épargne sécurisée</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Transmission optimisée</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Flexibilité des versements</span>
+                        </div>
+                    </div>
+                    <div class="offre-price">
+                        <span class="price">À partir de 100 DH/mois</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="demanderAssurance('vie')">
+                        <i class="fas fa-shield-alt"></i> Demander un devis
+                    </button>
+                </div>
+
+                <!-- Assurance Voyage -->
+                <div class="offre-card">
+                    <div class="offre-icon">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                    <h3>Assurance Voyage</h3>
+                    <p class="offre-description">Voyagez en toute sérénité avec une protection complète pour vos déplacements.</p>
+                    <div class="offre-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Assistance rapatriement</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Frais médicaux</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Annulation voyage</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Bagages</span>
+                        </div>
+                    </div>
+                    <div class="offre-price">
+                        <span class="price">À partir de 8 DH/jour</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="demanderAssurance('voyage')">
+                        <i class="fas fa-shield-alt"></i> Demander un devis
+                    </button>
+                </div>
+
+                <!-- Assurance Professionnelle -->
+                <div class="offre-card">
+                    <div class="offre-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Assurance Professionnelle</h3>
+                    <p class="offre-description">Protégez votre activité professionnelle avec des garanties adaptées à votre secteur.</p>
+                    <div class="offre-features">
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Responsabilité civile pro</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Protection juridique</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Perte d'exploitation</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Cyber-risques</span>
+                        </div>
+                    </div>
+                    <div class="offre-price">
+                        <span class="price">À partir de 35 DH/mois</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="demanderAssurance('professionnelle')">
+                        <i class="fas fa-shield-alt"></i> Demander un devis
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Simulateur d'Assurance Section -->
+    <section class="simulateur-assurance" id="simulateur">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Simulateur d'Assurance</h2>
+                <p class="section-description">Calculez votre cotisation d'assurance en quelques clics</p>
+            </div>
+            
+            <div class="simulateur-content">
+                <form id="insurance-simulator" class="simulateur-form">
+                    <div class="form-group">
+                        <label for="insurance-type">Type d'assurance</label>
+                        <select id="insurance-type" name="insuranceType" required>
+                            <option value="">Sélectionnez un type</option>
+                            <option value="auto">Automobile</option>
+                            <option value="habitation">Habitation</option>
+                            <option value="sante">Santé</option>
+                            <option value="vie">Vie</option>
+                            <option value="voyage">Voyage</option>
+                            <option value="professionnelle">Professionnelle</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="coverage-amount">Montant de garantie (DH)</label>
+                        <input type="number" id="coverage-amount" name="coverageAmount" min="10000" max="1000000" value="100000" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="duration">Durée (mois)</label>
+                        <select id="duration" name="duration" required>
+                            <option value="12">12 mois</option>
+                            <option value="24">24 mois</option>
+                            <option value="36">36 mois</option>
+                            <option value="60">60 mois</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-large">
+                        <i class="fas fa-calculator"></i> Calculer ma cotisation
+                    </button>
+                </form>
+                
+                <div id="simulation-result" class="simulation-result" style="display: none;">
+                    <h3>Résultat de votre simulation</h3>
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <span class="result-label">Cotisation mensuelle</span>
+                            <span class="result-value" id="monthly-premium">-</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Cotisation annuelle</span>
+                            <span class="result-value" id="annual-premium">-</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Total sur la durée</span>
+                            <span class="result-value" id="total-premium">-</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline" onclick="demanderDevisPersonnalise()">
+                        <i class="fas fa-file-alt"></i> Demander un devis personnalisé
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal pour les demandes d'assurance -->
+    <div id="insurance-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Demande d'assurance</h3>
+                <button class="close-btn" onclick="closeInsuranceModal()">&times;</button>
+            </div>
+            
+            <!-- Message de connexion requise -->
+            <div id="auth-required" class="modal-body" style="display: none;">
+                <div class="auth-message">
+                    <i class="fas fa-lock"></i>
+                    <h4>Connexion requise</h4>
+                    <p>Vous devez être connecté pour demander une assurance.</p>
+                    <div class="auth-actions">
+                        <a href="connexion.html" class="btn btn-primary">Se connecter</a>
+                        <a href="inscription.html" class="btn btn-outline">S'inscrire</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Formulaire de demande d'assurance -->
+            <form id="insurance-form" class="modal-body" style="display: none;">
+                <div class="form-grid">
+                    <!-- Informations Personnelles -->
+                    <div class="form-section">
+                        <h3 class="section-title">Informations Personnelles</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="client-name" class="form-label">Nom complet *</label>
+                                <input type="text" id="client-name" name="clientName" class="form-input" required>
+                                <div class="error-message" id="client-name-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="client-email" class="form-label">Email *</label>
+                                <input type="email" id="client-email" name="clientEmail" class="form-input" required>
+                                <div class="error-message" id="client-email-error"></div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="client-phone" class="form-label">Téléphone *</label>
+                                <input type="tel" id="client-phone" name="clientPhone" class="form-input" required>
+                                <div class="error-message" id="client-phone-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="client-date-naissance" class="form-label">Date de naissance *</label>
+                                <input type="date" id="client-date-naissance" name="clientDateNaissance" class="form-input" required>
+                                <div class="error-message" id="client-date-naissance-error"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Type d'Assurance -->
+                    <div class="form-section">
+                        <h3 class="section-title">Type d'Assurance</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="insurance-type-form" class="form-label">Type d'assurance *</label>
+                                <input type="text" id="insurance-type-form" name="insuranceType" class="form-input" readonly>
+                                <div class="error-message" id="insurance-type-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="coverage-amount-form" class="form-label">Montant de garantie (DH) *</label>
+                                <input type="number" id="coverage-amount-form" name="coverageAmount" class="form-input" min="10000" max="1000000" required>
+                                <div class="error-message" id="coverage-amount-error"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informations Supplémentaires -->
+                    <div class="form-section">
+                        <h3 class="section-title">Informations Supplémentaires</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="additional-info" class="form-label">Description des besoins</label>
+                                <textarea id="additional-info" name="additionalInfo" class="form-input" rows="4" placeholder="Décrivez vos besoins spécifiques, votre situation, etc..."></textarea>
+                                <div class="error-message" id="additional-info-error"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Envoyer ma demande
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="closeInsuranceModal()">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth-unified.js"></script>
+    <script src="assurances-script.js"></script>
+</body>
+</html>

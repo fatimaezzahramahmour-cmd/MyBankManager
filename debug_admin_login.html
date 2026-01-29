@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Connexion Admin</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-panel { background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .log { background: #000; color: #0f0; padding: 10px; border-radius: 4px; height: 300px; overflow-y: auto; font-family: monospace; }
+        .test-btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .test-btn:hover { background: #0056b3; }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Debug Connexion Admin</h1>
+    
+    <div class="debug-panel">
+        <h2>Tests de connexion</h2>
+        <button class="test-btn" onclick="testServer()">1. Test Serveur</button>
+        <button class="test-btn" onclick="testAdminLogin()">2. Test Connexion Admin</button>
+        <button class="test-btn" onclick="testClientLogin()">3. Test Connexion Client</button>
+        <button class="test-btn" onclick="testRedirect()">4. Test Redirection</button>
+        <button class="test-btn" onclick="clearLog()">5. Effacer Log</button>
+    </div>
+    
+    <div class="debug-panel">
+        <h2>Log de debug</h2>
+        <div id="log" class="log"></div>
+    </div>
+    
+    <div class="debug-panel">
+        <h2>Informations système</h2>
+        <p><strong>URL actuelle:</strong> <span id="current-url"></span></p>
+        <p><strong>localStorage:</strong> <span id="localstorage-info"></span></p>
+        <p><strong>User Agent:</strong> <span id="user-agent"></span></p>
+    </div>
+
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            log.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function clearLog() {
+            log.innerHTML = '';
+        }
+        
+        function testServer() {
+            addLog('🔍 Test de connexion au serveur...');
+            fetch('http://localhost:8081/api/health')
+                .then(response => {
+                    addLog(`✅ Serveur accessible - Status: ${response.status}`, 'success');
+                    return response.json();
+                })
+                .then(data => {
+                    addLog(`📊 Données serveur: ${JSON.stringify(data)}`, 'success');
+                })
+                .catch(error => {
+                    addLog(`❌ Erreur serveur: ${error.message}`, 'error');
+                });
+        }
+        
+        function testAdminLogin() {
+            addLog('🔐 Test de connexion admin...');
+            fetch('http://localhost:8081/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: 'admin@mybank.com',
+                    password: 'admin123'
+                })
+            })
+            .then(response => {
+                addLog(`📡 Réponse serveur: ${response.status}`, 'info');
+                return response.json();
+            })
+            .then(data => {
+                addLog(`📊 Données reçues: ${JSON.stringify(data)}`, 'success');
+                
+                if (data.status === 'success') {
+                    // Simuler la logique de connexion
+                    const user = {
+                        id: data.user?.id || 'admin',
+                        email: 'admin@mybank.com',
+                        fullName: 'Administrateur',
+                        role: 'admin',
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    localStorage.setItem('authToken', 'token_' + Date.now());
+                    
+                    addLog('💾 Données utilisateur sauvegardées dans localStorage', 'success');
+                    addLog(`👤 Utilisateur: ${JSON.stringify(user)}`, 'success');
+                    
+                    // Test de redirection
+                    setTimeout(() => {
+                        addLog('🚀 Tentative de redirection vers admin-dashboard.html...', 'info');
+                        window.location.href = 'admin-dashboard.html';
+                    }, 2000);
+                } else {
+                    addLog(`❌ Connexion échouée: ${data.message}`, 'error');
+                }
+            })
+            .catch(error => {
+                addLog(`❌ Erreur de connexion: ${error.message}`, 'error');
+            });
+        }
+        
+        function testClientLogin() {
+            addLog('👤 Test de connexion client...');
+            fetch('http://localhost:8081/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: 'client@test.com',
+                    password: 'test123'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                addLog(`📊 Réponse client: ${JSON.stringify(data)}`, 'success');
+            })
+            .catch(error => {
+                addLog(`❌ Erreur client: ${error.message}`, 'error');
+            });
+        }
+        
+        function testRedirect() {
+            addLog('🔄 Test de redirection...');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            
+            if (currentUser) {
+                addLog(`👤 Utilisateur connecté: ${currentUser.email} (${currentUser.role})`, 'success');
+                
+                if (currentUser.role === 'admin') {
+                    addLog('✅ Redirection vers admin-dashboard.html', 'success');
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    addLog('✅ Redirection vers index.html', 'success');
+                    window.location.href = 'index.html';
+                }
+            } else {
+                addLog('❌ Aucun utilisateur connecté', 'error');
+            }
+        }
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('current-url').textContent = window.location.href;
+            document.getElementById('user-agent').textContent = navigator.userAgent;
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            document.getElementById('localstorage-info').textContent = currentUser ? 
+                `Utilisateur connecté: ${currentUser.email}` : 'Aucun utilisateur connecté';
+            
+            addLog('🚀 Page de debug chargée', 'info');
+            addLog(`📍 URL: ${window.location.href}`, 'info');
+            addLog(`👤 localStorage: ${localStorage.getItem('currentUser') || 'vide'}`, 'info');
+        });
+    </script>
+</body>
+</html>

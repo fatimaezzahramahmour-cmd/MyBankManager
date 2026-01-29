@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prêts & crédits - MyBankManager</title>
+    <link rel="stylesheet" href="professional-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <span>MyBankManager</span>
+                </div>
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Accueil</a></li>
+                        <li><a href="comptes.html" class="nav-link">Comptes</a></li>
+                        <li><a href="cartes.html" class="nav-link">Cartes</a></li>
+                        <li><a href="prets.html" class="nav-link active">Prêts</a></li>
+                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions" id="header-actions">
+                    <a href="connexion.html" class="btn btn-outline">Se connecter</a>
+                    <a href="inscription.html" class="btn btn-primary">S'inscrire</a>
+                </div>
+                <div class="nav-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">Solutions de Financement</h1>
+                    <p class="hero-description">Réalisez vos projets avec nos solutions de prêts adaptées à tous vos besoins. Des taux compétitifs et des conditions avantageuses pour vous accompagner dans vos projets personnels et professionnels.</p>
+                    <div class="hero-actions">
+                        <a href="demande-pret.html" class="btn btn-primary btn-large">Demander un prêt</a>
+                        <a href="#services" class="btn btn-outline btn-large">Découvrir nos solutions</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="banking-card">
+                        <div class="card-chip"></div>
+                        <div class="card-number">**** **** **** 1234</div>
+                        <div class="card-info">
+                            <div class="card-holder">VOTRE NOM</div>
+                            <div class="card-logo">
+                                <i class="fas fa-university"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Prêts -->
+    <section class="services" id="services" style="padding-top:40px;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Nos Solutions de Prêts</h2>
+                <p class="section-description">Des solutions de financement adaptées à tous vos projets personnels et professionnels.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                    <h3>Prêt Personnel</h3>
+                    <p>Financez vos projets personnels avec des conditions avantageuses et un taux compétitif.</p>
+                    <a href="demande-pret.html" class="service-link">Demander un prêt <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-home"></i></div>
+                    <h3>Prêt Immobilier</h3>
+                    <p>Devenez propriétaire grâce à nos solutions de financement immobilier sur-mesure.</p>
+                    <a href="demande-pret.html" class="service-link">Demander un prêt <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-car"></i></div>
+                    <h3>Crédit Auto</h3>
+                    <p>Achetez votre véhicule neuf ou d'occasion en toute simplicité avec nos conditions avantageuses.</p>
+                    <a href="demande-pret.html" class="service-link">Demander un prêt <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-tools"></i></div>
+                    <h3>Crédit Travaux</h3>
+                    <p>Rénovez votre logement avec nos solutions de financement travaux personnalisées.</p>
+                    <a href="demande-pret.html" class="service-link">Demander un prêt <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <h3>Crédit Études</h3>
+                    <p>Financez vos études supérieures avec des conditions adaptées aux étudiants.</p>
+                    <a href="demande-pret.html" class="service-link">Demander un prêt <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-briefcase"></i></div>
+                    <h3>Prêt Professionnel</h3>
+                    <p>Développez votre activité professionnelle avec nos solutions de financement dédiées.</p>
+                    <a href="demande-pret.html" class="service-link">Demander un prêt <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+        </section>
+
+    <!-- Simulateur Section -->
+    <section id="simulateur" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Simulateur de Prêt</h2>
+                <p class="section-description">Calculez votre capacité d'emprunt et vos mensualités</p>
+            </div>
+            
+            <div class="simulator-container">
+                <form class="simulator-form" id="loan-simulator">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Type de prêt</label>
+                            <select class="form-input" name="loanType" required>
+                                <option value="">Choisir un type</option>
+                                <option value="personnel">Prêt personnel</option>
+                                <option value="immobilier">Prêt immobilier</option>
+                                <option value="auto">Prêt automobile</option>
+                                <option value="travaux">Prêt travaux</option>
+                                <option value="etudiant">Prêt étudiant</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Montant souhaité (DH)</label>
+                            <input type="number" class="form-input" name="amount" min="1000" max="10000000" step="1000" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Durée (mois)</label>
+                            <select class="form-input" name="duration" required>
+                                <option value="">Choisir la durée</option>
+                                <option value="12">1 an (12 mois)</option>
+                                <option value="24">2 ans (24 mois)</option>
+                                <option value="36">3 ans (36 mois)</option>
+                                <option value="60">5 ans (60 mois)</option>
+                                <option value="84">7 ans (84 mois)</option>
+                                <option value="120">10 ans (120 mois)</option>
+                                <option value="180">15 ans (180 mois)</option>
+                                <option value="240">20 ans (240 mois)</option>
+                                <option value="300">25 ans (300 mois)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Revenus mensuels (DH)</label>
+                            <input type="number" class="form-input" name="income" min="2000" step="100" required>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-calculator"></i> Calculer ma simulation
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="simulation-result" class="simulation-result" style="display: none;">
+                    <h3>Résultat de votre simulation</h3>
+                    <div class="result-details">
+                        <div class="result-item">
+                            <span class="result-label">Montant emprunté :</span>
+                            <span class="result-value" id="borrowed-amount">0 DH</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Taux d'intérêt :</span>
+                            <span class="result-value" id="interest-rate">0%</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Mensualité :</span>
+                            <span class="result-value" id="monthly-payment">0 DH</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Coût total du crédit :</span>
+                            <span class="result-value" id="total-cost">0 DH</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Taux d'endettement :</span>
+                            <span class="result-value" id="debt-ratio">0%</span>
+                        </div>
+                    </div>
+                    <div class="eligibility-status" id="eligibility-status">
+                        <!-- Statut d'éligibilité dynamique -->
+                    </div>
+                    <button class="btn btn-primary" onclick="demanderPretPersonnalise()">
+                        <i class="fas fa-file-alt"></i> Faire une demande de prêt
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-university"></i>
+                        <span>MyBankManager</span>
+                    </div>
+                    <p>Votre partenaire bancaire de confiance pour tous vos projets financiers.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="comptes.html">Comptes</a></li>
+                        <li><a href="cartes.html">Cartes</a></li>
+                        <li><a href="prets.html">Prêts</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Aide</a></li>
+                        <li><a href="about.html">À propos</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Suivez-nous</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 MyBankManager. Tous droits réservés. Casablanca, Maroc</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="auth-unified.js"></script>
+    <script src="prets-simulator.js"></script>
+</body>
+</html> 

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demande de Prêt - MyBankManager</title>
+    <link rel="stylesheet" href="professional-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <span>MyBankManager</span>
+                </div>
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Accueil</a></li>
+                        <li><a href="comptes.html" class="nav-link">Comptes</a></li>
+                        <li><a href="cartes.html" class="nav-link">Cartes</a></li>
+                        <li><a href="prets.html" class="nav-link">Prêts</a></li>
+                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions" id="header-actions">
+                    <a href="connexion.html" class="btn btn-outline">Se connecter</a>
+                    <a href="inscription.html" class="btn btn-primary">S'inscrire</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section Formulaire de Demande de Prêt -->
+    <section class="demande-section">
+        <div class="container">
+            <div class="demande-container">
+                <div class="demande-header">
+                    <h1 class="demande-title">Demande de Prêt</h1>
+                    <p class="demande-description">Remplissez ce formulaire pour soumettre votre demande de prêt</p>
+                </div>
+
+                <!-- Messages d'authentification -->
+                <div id="auth-message" class="auth-message hidden">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>Authentification requise</strong>
+                            <p>Vous devez créer un compte ou vous connecter pour faire une demande.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="verification-message" class="verification-message hidden">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Vérification requise</strong>
+                            <p>Votre compte doit être vérifié pour soumettre une demande. <button onclick="resendVerification()" class="btn btn-outline" style="margin-top: 0.5rem;">Renvoyer l'email de vérification</button></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulaire -->
+                <form id="pret-form" class="demande-form" novalidate>
+                    <div class="form-grid">
+                        <!-- Informations Personnelles -->
+                        <div class="form-section">
+                            <h3 class="section-title">Informations Personnelles</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="nom" class="form-label">Nom complet *</label>
+                                    <input type="text" id="nom" name="nom" class="form-input" required>
+                                    <div class="error-message" id="nom-error"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email" class="form-label">Email *</label>
+                                    <input type="email" id="email" name="email" class="form-input" required>
+                                    <div class="error-message" id="email-error"></div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="telephone" class="form-label">Téléphone *</label>
+                                    <input type="tel" id="telephone" name="telephone" class="form-input" required>
+                                    <div class="error-message" id="telephone-error"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="date-naissance" class="form-label">Date de naissance *</label>
+                                    <input type="date" id="date-naissance" name="date-naissance" class="form-input" required>
+                                    <div class="error-message" id="date-naissance-error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Type de Prêt -->
+                        <div class="form-section">
+                            <h3 class="section-title">Type de Prêt</h3>
+                            <div class="form-group">
+                                <label for="type-pret" class="form-label">Sélectionnez le type de prêt *</label>
+                                <select id="type-pret" name="type-pret" class="form-select" required>
+                                    <option value="">Choisissez une option</option>
+                                    <option value="pret-personnel">Prêt Personnel</option>
+                                    <option value="pret-immobilier">Prêt Immobilier</option>
+                                    <option value="credit-auto">Crédit Auto</option>
+                                    <option value="credit-travaux">Crédit Travaux</option>
+                                    <option value="credit-etudes">Crédit Études</option>
+                                    <option value="autre">Autre type de prêt</option>
+                                </select>
+                                <div class="error-message" id="type-pret-error"></div>
+                            </div>
+                        </div>
+
+                        <!-- Détails du Prêt -->
+                        <div class="form-section">
+                            <h3 class="section-title">Détails du Prêt</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="montant" class="form-label">Montant demandé (€) *</label>
+                                    <input type="number" id="montant" name="montant" class="form-input" min="1000" step="100" required>
+                                    <div class="error-message" id="montant-error"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="duree" class="form-label">Durée souhaitée (mois) *</label>
+                                    <input type="number" id="duree" name="duree" class="form-input" min="12" max="360" required>
+                                    <div class="error-message" id="duree-error"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="motif" class="form-label">Motif du prêt *</label>
+                                <textarea id="motif" name="motif" class="form-textarea" rows="4" required placeholder="Décrivez le motif de votre demande de prêt..."></textarea>
+                                <div class="error-message" id="motif-error"></div>
+                            </div>
+                        </div>
+
+                        <!-- Revenus -->
+                        <div class="form-section">
+                            <h3 class="section-title">Situation Financière</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="revenus-mensuels" class="form-label">Revenus mensuels (€) *</label>
+                                    <input type="number" id="revenus-mensuels" name="revenus-mensuels" class="form-input" min="0" required>
+                                    <div class="error-message" id="revenus-mensuels-error"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="charges-mensuelles" class="form-label">Charges mensuelles (€) *</label>
+                                    <input type="number" id="charges-mensuelles" name="charges-mensuelles" class="form-input" min="0" required>
+                                    <div class="error-message" id="charges-mensuelles-error"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="employeur" class="form-label">Nom de l'employeur *</label>
+                                <input type="text" id="employeur" name="employeur" class="form-input" required>
+                                <div class="error-message" id="employeur-error"></div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Conditions -->
+                        <div class="form-section">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="conditions" name="conditions" class="form-checkbox" required>
+                                <label for="conditions" class="checkbox-label">
+                                    J'accepte les <a href="#" class="link">conditions générales</a> et la <a href="#" class="link">politique de confidentialité</a> *
+                                </label>
+                            </div>
+                            <div class="error-message" id="conditions-error"></div>
+                        </div>
+                    </div>
+
+                    <!-- Actions du formulaire -->
+                    <div class="form-actions">
+                        <button type="button" onclick="window.history.back()" class="btn btn-outline">
+                            <i class="fas fa-arrow-left"></i>
+                            Retour
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Soumettre la demande
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-university"></i>
+                        <span>MyBankManager</span>
+                    </div>
+                    <p>Votre partenaire bancaire de confiance pour tous vos projets financiers.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="comptes.html">Comptes bancaires</a></li>
+                        <li><a href="cartes.html">Cartes bancaires</a></li>
+                        <li><a href="prets.html">Prêts et crédits</a></li>
+                        <li><a href="assurances.html">Assurances</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="about.html">À propos</a></li>
+                        <li><a href="#">Aide</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Suivez-nous</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 MyBankManager. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="auth-unified.js"></script>
+    <script src="demande-pret-script.js"></script>
+</body>
+</html>

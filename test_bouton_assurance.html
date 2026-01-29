@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Bouton Assurance - MyBankManager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Bouton Assurance</h1>
+    
+    <div class="test-form">
+        <h3>Formulaire de test</h3>
+        
+        <form id="insurance-form">
+            <div class="form-group">
+                <label for="client-name">Nom complet</label>
+                <input type="text" id="client-name" name="clientName" value="Test User" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="client-email">Email</label>
+                <input type="email" id="client-email" name="clientEmail" value="test@example.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="client-phone">Téléphone</label>
+                <input type="tel" id="client-phone" name="clientPhone" value="0612345678" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="insurance-type">Type d'assurance</label>
+                <input type="text" id="insurance-type" name="insuranceType" value="Assurance Automobile" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="coverage-amount">Montant de garantie (DH)</label>
+                <input type="number" id="coverage-amount" name="coverageAmount" value="50000" min="10000" max="1000000" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="additional-info">Informations supplémentaires</label>
+                <textarea id="additional-info" name="additionalInfo" rows="4" placeholder="Décrivez vos besoins...">Test assurance</textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" id="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Envoyer ma demande
+                </button>
+                <button type="button" onclick="testClick()">
+                    Test Clic Direct
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <div id="result"></div>
+    
+    <script>
+        // Simuler unifiedAuthManager
+        window.unifiedAuthManager = {
+            isLoggedIn: function() {
+                return true; // Simuler un utilisateur connecté
+            }
+        };
+        
+        // Gestionnaire d'événements
+        document.addEventListener('submit', function(e) {
+            console.log('📝 Événement submit détecté:', e.target.id);
+            if (e.target.id === 'insurance-form') {
+                e.preventDefault();
+                console.log('📤 Soumission de demande d\'assurance...');
+                submitInsuranceRequest();
+            }
+        });
+        
+        // Gestionnaire direct sur le bouton
+        document.getElementById('submit-btn').addEventListener('click', function(e) {
+            console.log('🔘 Clic sur le bouton d\'envoi détecté');
+        });
+        
+        function testClick() {
+            console.log('🔘 Test de clic direct');
+            document.getElementById('result').innerHTML = '<div class="result info">✅ Clic détecté !</div>';
+        }
+        
+        async function submitInsuranceRequest() {
+            console.log('🔄 Début de soumission de la demande d\'assurance');
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="result info">🔄 Envoi en cours...</div>';
+            
+            try {
+                const form = document.getElementById('insurance-form');
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Ajouter des métadonnées
+                data.type = 'assurance';
+                data.dateSoumission = new Date().toISOString();
+                data.statut = 'en_attente';
+                data.id = Date.now().toString();
+                
+                console.log('📊 Données préparées:', data);
+                
+                // Envoyer au serveur
+                const response = await fetch('/api/submit-demande', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                console.log('📡 Réponse API:', result);
+                
+                if (result.status === 'success') {
+                    resultDiv.innerHTML = '<div class="result success">✅ Demande envoyée avec succès !</div>';
+                } else {
+                    resultDiv.innerHTML = '<div class="result error">❌ Erreur: ' + result.message + '</div>';
+                }
+                
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                resultDiv.innerHTML = '<div class="result error">❌ Erreur réseau: ' + error.message + '</div>';
+            }
+        }
+        
+        // Log au chargement
+        console.log('🚀 Page de test chargée');
+        console.log('📋 Formulaire trouvé:', document.getElementById('insurance-form'));
+        console.log('🔘 Bouton trouvé:', document.getElementById('submit-btn'));
+    </script>
+</body>
+</html>

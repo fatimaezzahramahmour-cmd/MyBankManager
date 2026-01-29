@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API - MyBankManager</title>
+    <link rel="stylesheet" href="professional-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .api-tester {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-xl);
+        }
+        
+        .test-section {
+            background: var(--secondary-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .endpoint-card {
+            background: var(--background-light);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .method {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-right: var(--spacing-sm);
+        }
+        
+        .method.get { background: #10b981; color: white; }
+        .method.post { background: #3b82f6; color: white; }
+        .method.put { background: #f59e0b; color: white; }
+        .method.delete { background: #ef4444; color: white; }
+        
+        .test-form {
+            display: grid;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+        }
+        
+        .response-area {
+            background: #1f2937;
+            color: #10b981;
+            font-family: 'Courier New', monospace;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+            min-height: 200px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+        }
+        
+        .status-badge {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .status-200 { background: #dcfce7; color: #166534; }
+        .status-400 { background: #fef3c7; color: #92400e; }
+        .status-500 { background: #fee2e2; color: #991b1b; }
+        
+        .server-status {
+            text-align: center;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .server-online {
+            background: #dcfce7;
+            color: #166534;
+            border: 2px solid #10b981;
+        }
+        
+        .server-offline {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-code"></i>
+                    <span>Test API MyBankManager</span>
+                </div>
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Accueil</a></li>
+                        <li><a href="admin-dashboard.html" class="nav-link">Admin</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="checkServerStatus()">
+                        <i class="fas fa-server"></i> Vérifier Serveur
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="api-tester">
+        <!-- Statut du serveur -->
+        <div id="server-status" class="server-status server-offline">
+            <h3><i class="fas fa-server"></i> Statut du Serveur</h3>
+            <p id="status-message">Cliquez sur "Vérifier Serveur" pour tester la connexion</p>
+            <p><strong>URL:</strong> http://localhost:8080/api</p>
+        </div>
+
+        <!-- Tests d'authentification -->
+        <section class="test-section">
+            <h2><i class="fas fa-user-shield"></i> Tests d'Authentification</h2>
+            
+            <!-- Inscription -->
+            <div class="endpoint-card">
+                <h3>
+                    <span class="method post">POST</span>
+                    /api/auth/register - Inscription
+                </h3>
+                <form class="test-form" onsubmit="testRegister(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nom complet</label>
+                            <input type="text" class="form-input" name="fullName" value="Test User" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" name="email" value="test@example.com" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Téléphone</label>
+                            <input type="tel" class="form-input" name="telephone" value="0612345678" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mot de passe</label>
+                            <input type="password" class="form-input" name="password" value="password123" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Tester Inscription
+                    </button>
+                </form>
+                <div id="register-response" class="response-area" style="display: none;"></div>
+            </div>
+
+            <!-- Connexion -->
+            <div class="endpoint-card">
+                <h3>
+                    <span class="method post">POST</span>
+                    /api/auth/login - Connexion
+                </h3>
+                <form class="test-form" onsubmit="testLogin(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" name="email" value="test@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mot de passe</label>
+                            <input type="password" class="form-input" name="password" value="password123" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Tester Connexion
+                    </button>
+                </form>
+                <div id="login-response" class="response-area" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- Tests des prêts -->
+        <section class="test-section">
+            <h2><i class="fas fa-hand-holding-usd"></i> Tests des Prêts</h2>
+            
+            <!-- Créer un prêt -->
+            <div class="endpoint-card">
+                <h3>
+                    <span class="method post">POST</span>
+                    /api/loans - Demande de prêt
+                </h3>
+                <form class="test-form" onsubmit="testCreateLoan(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email utilisateur</label>
+                            <input type="email" class="form-input" name="userEmail" value="test@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Montant</label>
+                            <input type="number" class="form-input" name="amount" value="50000" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Durée (mois)</label>
+                            <input type="number" class="form-input" name="duration" value="36" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Type de prêt</label>
+                            <select class="form-input" name="type" required>
+                                <option value="personnel">Personnel</option>
+                                <option value="immobilier">Immobilier</option>
+                                <option value="auto">Automobile</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Revenus mensuels</label>
+                        <input type="number" class="form-input" name="monthlyIncome" value="8000" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Créer Demande de Prêt
+                    </button>
+                </form>
+                <div id="create-loan-response" class="response-area" style="display: none;"></div>
+            </div>
+
+            <!-- Lister les prêts -->
+            <div class="endpoint-card">
+                <h3>
+                    <span class="method get">GET</span>
+                    /api/loans - Liste des prêts
+                </h3>
+                <button class="btn btn-primary" onclick="testGetLoans()">
+                    <i class="fas fa-list"></i> Récupérer Liste des Prêts
+                </button>
+                <div id="get-loans-response" class="response-area" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- Tests des cartes -->
+        <section class="test-section">
+            <h2><i class="fas fa-credit-card"></i> Tests des Cartes</h2>
+            
+            <!-- Créer une carte -->
+            <div class="endpoint-card">
+                <h3>
+                    <span class="method post">POST</span>
+                    /api/creditcards - Demande de carte
+                </h3>
+                <form class="test-form" onsubmit="testCreateCard(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email utilisateur</label>
+                            <input type="email" class="form-input" name="userEmail" value="test@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Type de carte</label>
+                            <select class="form-input" name="cardType" required>
+                                <option value="standard">Standard</option>
+                                <option value="gold">Gold</option>
+                                <option value="platinum">Platinum</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Limite de crédit</label>
+                            <input type="number" class="form-input" name="creditLimit" value="10000" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Revenus mensuels</label>
+                            <input type="number" class="form-input" name="monthlyIncome" value="8000" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Créer Demande de Carte
+                    </button>
+                </form>
+                <div id="create-card-response" class="response-area" style="display: none;"></div>
+            </div>
+
+            <!-- Lister les cartes -->
+            <div class="endpoint-card">
+                <h3>
+                    <span class="method get">GET</span>
+                    /api/creditcards - Liste des cartes
+                </h3>
+                <button class="btn btn-primary" onclick="testGetCards()">
+                    <i class="fas fa-list"></i> Récupérer Liste des Cartes
+                </button>
+                <div id="get-cards-response" class="response-area" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- Tests admin -->
+        <section class="test-section">
+            <h2><i class="fas fa-user-shield"></i> Tests Admin</h2>
+            
+            <!-- Liste des utilisateurs -->
+            <div class="endpoint-card">
+                <h3>
+                    <span class="method get">GET</span>
+                    /api/admin/users - Liste des utilisateurs
+                </h3>
+                <button class="btn btn-primary" onclick="testGetUsers()">
+                    <i class="fas fa-users"></i> Récupérer Liste des Utilisateurs
+                </button>
+                <div id="get-users-response" class="response-area" style="display: none;"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8080/api';
+        const SIMPLE_API_URL = 'http://localhost:8080';
+        let isSimpleServer = false;
+
+        // Vérifier le statut du serveur
+        async function checkServerStatus() {
+            const statusDiv = document.getElementById('server-status');
+            const messageDiv = document.getElementById('status-message');
+            
+            // D'abord essayer le serveur Spring Boot
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    statusDiv.className = 'server-status server-online';
+                    messageDiv.innerHTML = '✅ Serveur Spring Boot en ligne et accessible';
+                    isSimpleServer = false;
+                    return;
+                }
+            } catch (error) {
+                // Essayer le serveur simple
+                try {
+                    const response = await fetch(`${SIMPLE_API_URL}/users`, {
+                        method: 'GET',
+                        mode: 'cors'
+                    });
+                    
+                    if (response.ok) {
+                        statusDiv.className = 'server-status server-online';
+                        messageDiv.innerHTML = '✅ Serveur Java Simple en ligne<br>📝 Fonctionnalités limitées (données statiques)';
+                        isSimpleServer = true;
+                        updateUIForSimpleServer();
+                        return;
+                    }
+                } catch (simpleError) {
+                    // Aucun serveur disponible
+                }
+            }
+            
+            statusDiv.className = 'server-status server-offline';
+            messageDiv.innerHTML = '❌ Aucun serveur accessible<br>Démarrez le backend Spring Boot ou le serveur simple';
+            isSimpleServer = false;
+        }
+
+        // Adapter l'interface pour le serveur simple
+        function updateUIForSimpleServer() {
+            // Masquer les sections d'authentification pour le serveur simple
+            const authSection = document.querySelector('.test-section:first-of-type');
+            if (authSection) {
+                authSection.style.display = 'none';
+            }
+            
+            // Ajouter une note pour le serveur simple
+            const note = document.createElement('div');
+            note.className = 'server-status server-online';
+            note.innerHTML = '📝 Mode Serveur Simple - Seules les lectures (GET) sont disponibles avec des données statiques';
+            note.style.marginBottom = '20px';
+            
+            const main = document.querySelector('.api-tester');
+            if (main && !document.getElementById('simple-note')) {
+                note.id = 'simple-note';
+                main.insertBefore(note, main.children[1]);
+            }
+        }
+
+        // Utilitaire pour afficher les réponses
+        function displayResponse(elementId, response, status) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            
+            const statusBadge = status >= 200 && status < 300 ? 
+                `<span class="status-badge status-200">Status: ${status}</span>` :
+                status >= 400 && status < 500 ?
+                `<span class="status-badge status-400">Status: ${status}</span>` :
+                `<span class="status-badge status-500">Status: ${status}</span>`;
+            
+            element.innerHTML = `${statusBadge}\n\n${JSON.stringify(response, null, 2)}`;
+        }
+
+        // Test inscription
+        async function testRegister(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                displayResponse('register-response', result, response.status);
+            } catch (error) {
+                displayResponse('register-response', { error: error.message }, 500);
+            }
+        }
+
+        // Test connexion
+        async function testLogin(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                displayResponse('login-response', result, response.status);
+            } catch (error) {
+                displayResponse('login-response', { error: error.message }, 500);
+            }
+        }
+
+        // Test création prêt
+        async function testCreateLoan(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/loans`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                displayResponse('create-loan-response', result, response.status);
+            } catch (error) {
+                displayResponse('create-loan-response', { error: error.message }, 500);
+            }
+        }
+
+        // Test récupération prêts
+        async function testGetLoans() {
+            try {
+                const url = isSimpleServer ? `${SIMPLE_API_URL}/loans` : `${API_BASE_URL}/loans`;
+                const response = await fetch(url);
+                const result = await response.json();
+                displayResponse('get-loans-response', result, response.status);
+            } catch (error) {
+                displayResponse('get-loans-response', { error: error.message }, 500);
+            }
+        }
+
+        // Test création carte
+        async function testCreateCard(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/creditcards`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                displayResponse('create-card-response', result, response.status);
+            } catch (error) {
+                displayResponse('create-card-response', { error: error.message }, 500);
+            }
+        }
+
+        // Test récupération cartes
+        async function testGetCards() {
+            try {
+                const url = isSimpleServer ? `${SIMPLE_API_URL}/cards` : `${API_BASE_URL}/creditcards`;
+                const response = await fetch(url);
+                const result = await response.json();
+                displayResponse('get-cards-response', result, response.status);
+            } catch (error) {
+                displayResponse('get-cards-response', { error: error.message }, 500);
+            }
+        }
+
+        // Test récupération utilisateurs
+        async function testGetUsers() {
+            try {
+                const url = isSimpleServer ? `${SIMPLE_API_URL}/users` : `${API_BASE_URL}/admin/users`;
+                const response = await fetch(url);
+                const result = await response.json();
+                displayResponse('get-users-response', result, response.status);
+            } catch (error) {
+                displayResponse('get-users-response', { error: error.message }, 500);
+            }
+        }
+
+        // Vérifier le serveur au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(checkServerStatus, 1000);
+        });
+    </script>
+</body>
+</html>

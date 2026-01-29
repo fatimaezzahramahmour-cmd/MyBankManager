@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test XHR Connection - MyBankManager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+        .test-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #218838;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .success {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+        }
+        .error {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+        }
+        .info {
+            background: rgba(23, 162, 184, 0.2);
+            border: 1px solid #17a2b8;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.online {
+            background: #28a745;
+            color: white;
+        }
+        .status.offline {
+            background: #dc3545;
+            color: white;
+        }
+        .endpoint-list {
+            list-style: none;
+            padding: 0;
+        }
+        .endpoint-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .endpoint-list li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test XHR Connection - MyBankManager</h1>
+        <p>Cette page teste la connexion entre le frontend et le backend.</p>
+        
+        <div class="test-section">
+            <h2>🌐 Configuration Backend</h2>
+            <p><strong>URL de base:</strong> <code>http://localhost:8081</code></p>
+            <p><strong>Serveur:</strong> <span id="server-status" class="status offline">Vérification...</span></p>
+            <button class="test-button" onclick="checkServerStatus()">Vérifier le serveur</button>
+            <div id="server-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📡 Test des Endpoints API</h2>
+            <button class="test-button" onclick="testEndpoint('/api/test')">Test de base</button>
+            <button class="test-button" onclick="testEndpoint('/api/users')">Liste utilisateurs</button>
+            <button class="test-button" onclick="testEndpoint('/api/admin/dashboard')">Dashboard Admin</button>
+            <button class="test-button" onclick="testEndpoint('/api/admin/users')">Utilisateurs Admin</button>
+            <div id="api-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔐 Test d'Authentification</h2>
+            <button class="test-button" onclick="testLogin()">Test de connexion</button>
+            <div id="auth-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Test Frontend-Backend</h2>
+            <button class="test-button" onclick="testFrontendBackend()">Test complet</button>
+            <div id="frontend-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 Diagnostic</h2>
+            <button class="test-button" onclick="runDiagnostic()">Lancer le diagnostic</button>
+            <div id="diagnostic-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📋 Endpoints Disponibles</h2>
+            <ul class="endpoint-list">
+                <li><strong>GET</strong> <code>/api/test</code> - Test de connexion</li>
+                <li><strong>GET</strong> <code>/api/users</code> - Liste des utilisateurs</li>
+                <li><strong>POST</strong> <code>/api/users/login</code> - Connexion utilisateur</li>
+                <li><strong>GET</strong> <code>/api/admin/dashboard</code> - Dashboard administrateur</li>
+                <li><strong>GET</strong> <code>/api/admin/users</code> - Liste des utilisateurs (admin)</li>
+                <li><strong>GET</strong> <code>/api/admin/loans</code> - Liste des prêts</li>
+                <li><strong>GET</strong> <code>/api/admin/transactions/recent</code> - Transactions récentes</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8081';
+        
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            
+            element.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            element.scrollTop = element.scrollHeight;
+        }
+
+        async function checkServerStatus() {
+            const statusElement = document.getElementById('server-status');
+            const resultElement = document.getElementById('server-result');
+            
+            resultElement.innerHTML = '';
+            log('server-result', '🔍 Vérification du serveur...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/test`);
+                if (response.ok) {
+                    const data = await response.json();
+                    statusElement.textContent = 'En ligne';
+                    statusElement.className = 'status online';
+                    log('server-result', `✅ Serveur connecté!`, 'success');
+                    log('server-result', `📊 Réponse: ${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                statusElement.textContent = 'Hors ligne';
+                statusElement.className = 'status offline';
+                log('server-result', `❌ Erreur de connexion: ${error.message}`, 'error');
+                log('server-result', '💡 Vérifiez que le serveur est démarré avec: node simple_server.js', 'info');
+            }
+        }
+
+        async function testEndpoint(endpoint) {
+            const resultElement = document.getElementById('api-result');
+            resultElement.innerHTML = '';
+            
+            log('api-result', `🔍 Test de l'endpoint: ${endpoint}`, 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('api-result', `✅ Succès! Status: ${response.status}`, 'success');
+                    log('api-result', `📊 Données: ${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    log('api-result', `❌ Erreur HTTP: ${response.status}`, 'error');
+                    log('api-result', `📊 Réponse: ${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                log('api-result', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function testLogin() {
+            const resultElement = document.getElementById('auth-result');
+            resultElement.innerHTML = '';
+            
+            log('auth-result', '🔐 Test de connexion utilisateur...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/users/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'test@example.com',
+                        password: 'test123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('auth-result', `✅ Connexion réussie! Status: ${response.status}`, 'success');
+                    log('auth-result', `📊 Réponse: ${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    log('auth-result', `❌ Erreur de connexion: ${response.status}`, 'error');
+                    log('auth-result', `📊 Réponse: ${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                log('auth-result', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFrontendBackend() {
+            const resultElement = document.getElementById('frontend-result');
+            resultElement.innerHTML = '';
+            
+            log('frontend-result', '🔄 Test complet frontend-backend...', 'info');
+            
+            // Test 1: Connexion de base
+            try {
+                const testResponse = await fetch(`${API_BASE_URL}/api/test`);
+                if (testResponse.ok) {
+                    log('frontend-result', '✅ Test de base réussi', 'success');
+                } else {
+                    throw new Error('Test de base échoué');
+                }
+            } catch (error) {
+                log('frontend-result', `❌ Test de base échoué: ${error.message}`, 'error');
+                return;
+            }
+            
+            // Test 2: Récupération des utilisateurs
+            try {
+                const usersResponse = await fetch(`${API_BASE_URL}/api/users`);
+                if (usersResponse.ok) {
+                    const usersData = await usersResponse.json();
+                    log('frontend-result', `✅ Utilisateurs récupérés: ${usersData.count || 0} utilisateurs`, 'success');
+                } else {
+                    throw new Error('Récupération utilisateurs échouée');
+                }
+            } catch (error) {
+                log('frontend-result', `❌ Récupération utilisateurs échouée: ${error.message}`, 'error');
+            }
+            
+            // Test 3: Dashboard admin
+            try {
+                const dashboardResponse = await fetch(`${API_BASE_URL}/api/admin/dashboard`);
+                if (dashboardResponse.ok) {
+                    const dashboardData = await dashboardResponse.json();
+                    log('frontend-result', '✅ Dashboard admin accessible', 'success');
+                } else {
+                    throw new Error('Dashboard admin inaccessible');
+                }
+            } catch (error) {
+                log('frontend-result', `❌ Dashboard admin inaccessible: ${error.message}`, 'error');
+            }
+            
+            log('frontend-result', '🎉 Test complet terminé!', 'success');
+        }
+
+        async function runDiagnostic() {
+            const resultElement = document.getElementById('diagnostic-result');
+            resultElement.innerHTML = '';
+            
+            log('diagnostic-result', '🔧 Lancement du diagnostic...', 'info');
+            
+            // Vérifier la configuration
+            log('diagnostic-result', `📋 Configuration:`, 'info');
+            log('diagnostic-result', `   - URL API: ${API_BASE_URL}`, 'info');
+            log('diagnostic-result', `   - Navigateur: ${navigator.userAgent}`, 'info');
+            log('diagnostic-result', `   - Support fetch: ${typeof fetch !== 'undefined'}`, 'info');
+            
+            // Test de connectivité réseau
+            try {
+                const startTime = Date.now();
+                const response = await fetch(`${API_BASE_URL}/api/test`);
+                const endTime = Date.now();
+                const latency = endTime - startTime;
+                
+                log('diagnostic-result', `🌐 Connectivité:`, 'info');
+                log('diagnostic-result', `   - Latence: ${latency}ms`, 'info');
+                log('diagnostic-result', `   - Status: ${response.status}`, 'info');
+                log('diagnostic-result', `   - Headers CORS: ${response.headers.get('Access-Control-Allow-Origin')}`, 'info');
+            } catch (error) {
+                log('diagnostic-result', `❌ Problème de connectivité: ${error.message}`, 'error');
+            }
+            
+            // Vérifier les endpoints critiques
+            const criticalEndpoints = [
+                '/api/test',
+                '/api/users',
+                '/api/admin/dashboard'
+            ];
+            
+            log('diagnostic-result', `🔍 Test des endpoints critiques:`, 'info');
+            for (const endpoint of criticalEndpoints) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+                    if (response.ok) {
+                        log('diagnostic-result', `   ✅ ${endpoint} - OK`, 'success');
+                    } else {
+                        log('diagnostic-result', `   ❌ ${endpoint} - ${response.status}`, 'error');
+                    }
+                } catch (error) {
+                    log('diagnostic-result', `   ❌ ${endpoint} - ${error.message}`, 'error');
+                }
+            }
+            
+            log('diagnostic-result', '🎯 Diagnostic terminé!', 'success');
+        }
+
+        // Vérification automatique au chargement
+        window.addEventListener('load', () => {
+            setTimeout(checkServerStatus, 1000);
+        });
+    </script>
+</body>
+</html>

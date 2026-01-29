@@ -1,0 +1,265 @@
+{
+  "info": {
+    "name": "MyBankManager API Tests",
+    "description": "Collection complète pour tester l'API MyBankManager",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "admin_token_12345",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Test de connexion",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/test",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "test"]
+        }
+      }
+    },
+    {
+      "name": "2. Connexion Admin",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@mybank.com\",\n  \"password\": \"admin123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/users/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users", "login"]
+        }
+      }
+    },
+    {
+      "name": "3. Connexion Client",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"client@example.com\",\n  \"password\": \"client123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/users/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users", "login"]
+        }
+      }
+    },
+    {
+      "name": "4. Inscription utilisateur",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"nouveau@email.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"Nouveau Utilisateur\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/users/register",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users", "register"]
+        }
+      }
+    },
+    {
+      "name": "5. Liste des utilisateurs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/users",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users"]
+        }
+      }
+    },
+    {
+      "name": "6. Dashboard Admin",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/dashboard",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "admin", "dashboard"]
+        }
+      }
+    },
+    {
+      "name": "7. Utilisateurs Admin",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/users",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "admin", "users"]
+        }
+      }
+    },
+    {
+      "name": "8. Prêts Admin",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/loans",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "admin", "loans"]
+        }
+      }
+    },
+    {
+      "name": "9. Transactions récentes",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/transactions/recent",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "admin", "transactions", "recent"]
+        }
+      }
+    },
+    {
+      "name": "10. Soumettre demande de prêt",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"type\": \"pret\",\n  \"email\": \"client@example.com\",\n  \"montant\": 50000,\n  \"duree\": 24,\n  \"raison\": \"Achat immobilier\",\n  \"revenus\": 80000,\n  \"emploi\": \"Ingénieur\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/submit-demande",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "submit-demande"]
+        }
+      }
+    },
+    {
+      "name": "11. Soumettre demande de carte",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"type\": \"carte\",\n  \"email\": \"client@example.com\",\n  \"typeCarte\": \"Gold\",\n  \"limite\": 10000,\n  \"revenus\": 60000\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/submit-demande",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "submit-demande"]
+        }
+      }
+    },
+    {
+      "name": "12. Liste des demandes (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/demandes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "admin", "demandes"]
+        }
+      }
+    },
+    {
+      "name": "13. Statistiques admin",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/stats",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "admin", "stats"]
+        }
+      }
+    },
+    {
+      "name": "14. Connexions utilisateurs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/user-connections",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "user-connections"]
+        }
+      }
+    },
+    {
+      "name": "15. Déconnexion",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@mybank.com\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/logout",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "logout"]
+        }
+      }
+    }
+  ]
+}

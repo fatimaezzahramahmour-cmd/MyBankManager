@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Boutons Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-success {
+            background: #28a745;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-outline {
+            background: transparent;
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+        .request-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            background: white;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Boutons Dashboard</h1>
+    
+    <div class="test-panel">
+        <h2>Test des Fonctions Globales</h2>
+        <button class="btn" onclick="testGlobalFunctions()">Tester Fonctions Globales</button>
+        <button class="btn" onclick="testAdminDashboard()">Tester AdminDashboard</button>
+        <button class="btn" onclick="createTestRequest()">Créer Demande Test</button>
+        
+        <div id="results" style="margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+            Résultats des tests...
+        </div>
+    </div>
+
+    <div class="test-panel">
+        <h2>Simulation Dashboard</h2>
+        <div class="request-card">
+            <h3>Demande Test #123</h3>
+            <p><strong>Type:</strong> Prêt</p>
+            <p><strong>Client:</strong> Test User</p>
+            <p><strong>Email:</strong> test@example.com</p>
+            
+            <div style="margin-top: 15px;">
+                <button class="btn btn-success" onclick="testApprove('123')">
+                    <i class="fas fa-check"></i> Approuver
+                </button>
+                <button class="btn btn-danger" onclick="testReject('123')">
+                    <i class="fas fa-times"></i> Refuser
+                </button>
+                <button class="btn btn-outline" onclick="testView('123')">
+                    <i class="fas fa-eye"></i> Voir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simuler les fonctions globales
+        function approveRequest(requestId) {
+            console.log('✅ Approuver demande:', requestId);
+            showNotification('Demande approuvée avec succès !', 'success');
+        }
+
+        function rejectRequest(requestId) {
+            console.log('❌ Refuser demande:', requestId);
+            showNotification('Demande refusée.', 'warning');
+        }
+
+        function viewRequest(requestId) {
+            console.log('👁️ Voir demande:', requestId);
+            showNotification('Affichage des détails de la demande ' + requestId, 'info');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notification.style.background = type === 'success' ? '#28a745' : 
+                                           type === 'warning' ? '#ffc107' : 
+                                           type === 'error' ? '#dc3545' : '#007bff';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        function testGlobalFunctions() {
+            const results = document.getElementById('results');
+            let output = '<h4>Test des Fonctions Globales:</h4>';
+            
+            // Test si les fonctions existent
+            if (typeof approveRequest === 'function') {
+                output += '<p style="color: green;">✅ approveRequest() existe</p>';
+            } else {
+                output += '<p style="color: red;">❌ approveRequest() n\'existe pas</p>';
+            }
+            
+            if (typeof rejectRequest === 'function') {
+                output += '<p style="color: green;">✅ rejectRequest() existe</p>';
+            } else {
+                output += '<p style="color: red;">❌ rejectRequest() n\'existe pas</p>';
+            }
+            
+            if (typeof viewRequest === 'function') {
+                output += '<p style="color: green;">✅ viewRequest() existe</p>';
+            } else {
+                output += '<p style="color: red;">❌ viewRequest() n\'existe pas</p>';
+            }
+            
+            if (typeof adminDashboard !== 'undefined') {
+                output += '<p style="color: green;">✅ adminDashboard est défini</p>';
+            } else {
+                output += '<p style="color: red;">❌ adminDashboard n\'est pas défini</p>';
+            }
+            
+            results.innerHTML = output;
+        }
+
+        function testAdminDashboard() {
+            const results = document.getElementById('results');
+            let output = '<h4>Test AdminDashboard:</h4>';
+            
+            if (typeof adminDashboard !== 'undefined') {
+                output += '<p style="color: green;">✅ adminDashboard existe</p>';
+                
+                if (typeof adminDashboard.approveRequest === 'function') {
+                    output += '<p style="color: green;">✅ adminDashboard.approveRequest() existe</p>';
+                } else {
+                    output += '<p style="color: red;">❌ adminDashboard.approveRequest() n\'existe pas</p>';
+                }
+                
+                if (typeof adminDashboard.rejectRequest === 'function') {
+                    output += '<p style="color: green;">✅ adminDashboard.rejectRequest() existe</p>';
+                } else {
+                    output += '<p style="color: red;">❌ adminDashboard.rejectRequest() n\'existe pas</p>';
+                }
+                
+                if (typeof adminDashboard.viewRequest === 'function') {
+                    output += '<p style="color: green;">✅ adminDashboard.viewRequest() existe</p>';
+                } else {
+                    output += '<p style="color: red;">❌ adminDashboard.viewRequest() n\'existe pas</p>';
+                }
+            } else {
+                output += '<p style="color: red;">❌ adminDashboard n\'est pas défini</p>';
+            }
+            
+            results.innerHTML = output;
+        }
+
+        function createTestRequest() {
+            const testRequest = {
+                id: 'test-' + Date.now(),
+                type: 'pret',
+                nom: 'Test User',
+                email: 'test@example.com',
+                montant: '50000',
+                duree: '24',
+                motif: 'Achat voiture',
+                dateSoumission: new Date().toISOString()
+            };
+            
+            // Sauvegarder dans localStorage
+            const demandes = JSON.parse(localStorage.getItem('admin-demandes') || '[]');
+            demandes.push(testRequest);
+            localStorage.setItem('admin-demandes', JSON.stringify(demandes));
+            
+            showNotification('Demande test créée avec ID: ' + testRequest.id, 'success');
+            
+            const results = document.getElementById('results');
+            results.innerHTML = '<h4>Demande Test Créée:</h4><pre>' + JSON.stringify(testRequest, null, 2) + '</pre>';
+        }
+
+        function testApprove(id) {
+            console.log('Test Approuver:', id);
+            if (typeof approveRequest === 'function') {
+                approveRequest(id);
+            } else {
+                showNotification('Fonction approveRequest non trouvée!', 'error');
+            }
+        }
+
+        function testReject(id) {
+            console.log('Test Refuser:', id);
+            if (typeof rejectRequest === 'function') {
+                rejectRequest(id);
+            } else {
+                showNotification('Fonction rejectRequest non trouvée!', 'error');
+            }
+        }
+
+        function testView(id) {
+            console.log('Test Voir:', id);
+            if (typeof viewRequest === 'function') {
+                viewRequest(id);
+            } else {
+                showNotification('Fonction viewRequest non trouvée!', 'error');
+            }
+        }
+
+        // Test au chargement
+        window.addEventListener('load', function() {
+            console.log('🧪 Page de test chargée');
+            testGlobalFunctions();
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Auth - MyBankManager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .debug-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn.danger {
+            background: #dc3545;
+        }
+        .btn.danger:hover {
+            background: #c82333;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Debug Authentification</h1>
+    
+    <div class="debug-panel">
+        <h2>État de l'Authentification</h2>
+        <div id="auth-status" class="status disconnected">
+            Chargement...
+        </div>
+        
+        <h3>Actions</h3>
+        <button class="btn" onclick="checkAuthStatus()">Vérifier l'état</button>
+        <button class="btn" onclick="forceUpdateUI()">Forcer mise à jour UI</button>
+        <button class="btn" onclick="clearSession()">Effacer session</button>
+        <button class="btn danger" onclick="logout()">Déconnexion</button>
+    </div>
+    
+    <div class="debug-panel">
+        <h2>Informations de Session</h2>
+        <pre id="session-info">Chargement...</pre>
+    </div>
+    
+    <div class="debug-panel">
+        <h2>Logs</h2>
+        <pre id="logs">Logs apparaîtront ici...</pre>
+    </div>
+
+    <script src="auth-unified.js"></script>
+    <script>
+        // Fonction pour vérifier l'état de l'authentification
+        function checkAuthStatus() {
+            const statusDiv = document.getElementById('auth-status');
+            const sessionInfo = document.getElementById('session-info');
+            
+            if (window.unifiedAuthManager) {
+                const isLoggedIn = window.unifiedAuthManager.isLoggedIn();
+                const currentUser = window.unifiedAuthManager.getCurrentUser();
+                
+                if (isLoggedIn && currentUser) {
+                    statusDiv.className = 'status connected';
+                    statusDiv.innerHTML = `
+                        ✅ Connecté<br>
+                        Email: ${currentUser.email}<br>
+                        Nom: ${currentUser.fullName}<br>
+                        Rôle: ${currentUser.role}
+                    `;
+                } else {
+                    statusDiv.className = 'status disconnected';
+                    statusDiv.innerHTML = '❌ Non connecté';
+                }
+                
+                // Afficher les informations de session
+                sessionInfo.textContent = JSON.stringify({
+                    isAuthenticated: window.unifiedAuthManager.isAuthenticated,
+                    isVerified: window.unifiedAuthManager.isVerified,
+                    isAdmin: window.unifiedAuthManager.isAdmin,
+                    currentUser: currentUser,
+                    localStorage: {
+                        currentUser: localStorage.getItem('currentUser'),
+                        authToken: localStorage.getItem('authToken'),
+                        auth_user: localStorage.getItem('auth_user'),
+                        auth_token: localStorage.getItem('auth_token')
+                    }
+                }, null, 2);
+                
+                addLog('État vérifié');
+            } else {
+                statusDiv.className = 'status disconnected';
+                statusDiv.innerHTML = '❌ Gestionnaire d\'authentification non disponible';
+                addLog('ERREUR: unifiedAuthManager non disponible');
+            }
+        }
+        
+        // Fonction pour effacer la session
+        function clearSession() {
+            if (window.unifiedAuthManager) {
+                window.unifiedAuthManager.clearSession();
+                addLog('Session effacée');
+                checkAuthStatus();
+            }
+        }
+        
+        // Fonction pour déconnexion
+        function logout() {
+            if (window.unifiedAuthManager) {
+                window.unifiedAuthManager.logout();
+                addLog('Déconnexion effectuée');
+            }
+        }
+        
+        // Fonction pour ajouter des logs
+        function addLog(message) {
+            const logsDiv = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            logsDiv.textContent += `[${timestamp}] ${message}\n`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        // Vérifier l'état au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('Page de débogage chargée');
+            setTimeout(checkAuthStatus, 1000);
+        });
+        
+        // Intercepter les logs de la console
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addLog('LOG: ' + args.join(' '));
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addLog('WARN: ' + args.join(' '));
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addLog('ERROR: ' + args.join(' '));
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demande de Carte Bancaire - MyBankManager</title>
+    <link rel="stylesheet" href="professional-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <span>MyBankManager</span>
+                </div>
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Accueil</a></li>
+                        <li><a href="comptes.html" class="nav-link">Comptes</a></li>
+                        <li><a href="cartes.html" class="nav-link">Cartes</a></li>
+                        <li><a href="prets.html" class="nav-link">Prêts</a></li>
+                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions" id="header-actions">
+                    <a href="connexion.html" class="btn btn-outline">Se connecter</a>
+                    <a href="inscription.html" class="btn btn-primary">S'inscrire</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section Formulaire de Demande de Carte -->
+    <section class="demande-section">
+        <div class="container">
+            <div class="demande-container">
+                <div class="demande-header">
+                    <h1 class="demande-title">Demande de Carte Bancaire</h1>
+                    <p class="demande-description">Remplissez ce formulaire pour demander votre carte bancaire</p>
+                </div>
+
+                <!-- Messages d'authentification -->
+                <div id="auth-message" class="auth-message hidden">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>Authentification requise</strong>
+                            <p>Vous devez créer un compte ou vous connecter pour faire une demande.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="verification-message" class="verification-message hidden">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Vérification requise</strong>
+                            <p>Votre compte doit être vérifié pour soumettre une demande. <button onclick="resendVerification()" class="btn btn-outline" style="margin-top: 0.5rem;">Renvoyer l'email de vérification</button></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulaire -->
+                <form id="carte-form" class="demande-form" novalidate>
+                    <div class="form-grid">
+                        <!-- Informations Personnelles -->
+                        <div class="form-section">
+                            <h3 class="section-title">Informations Personnelles</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="nom" class="form-label">Nom complet *</label>
+                                    <input type="text" id="nom" name="nom" class="form-input" required>
+                                    <div class="error-message" id="nom-error"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email" class="form-label">Email *</label>
+                                    <input type="email" id="email" name="email" class="form-input" required>
+                                    <div class="error-message" id="email-error"></div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="telephone" class="form-label">Téléphone *</label>
+                                    <input type="tel" id="telephone" name="telephone" class="form-input" required>
+                                    <div class="error-message" id="telephone-error"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="date-naissance" class="form-label">Date de naissance *</label>
+                                    <input type="date" id="date-naissance" name="date-naissance" class="form-input" required>
+                                    <div class="error-message" id="date-naissance-error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Type de Carte -->
+                        <div class="form-section">
+                            <h3 class="section-title">Type de Carte</h3>
+                            <div class="form-group">
+                                <label for="type-carte" class="form-label">Sélectionnez le type de carte *</label>
+                                <select id="type-carte" name="type-carte" class="form-select" required>
+                                    <option value="">Choisissez une option</option>
+                                    <option value="carte-debit">Carte de Débit</option>
+                                    <option value="carte-credit">Carte de Crédit</option>
+                                    <option value="carte-premium">Carte Premium</option>
+                                    <option value="carte-etudiante">Carte Étudiante</option>
+                                    <option value="carte-professionnelle">Carte Professionnelle</option>
+                                    <option value="autre">Autre type de carte</option>
+                                </select>
+                                <div class="error-message" id="type-carte-error"></div>
+                            </div>
+                        </div>
+
+                        <!-- Détails de la Carte -->
+                        <div class="form-section">
+                            <h3 class="section-title">Détails de la Carte</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="plafond-journalier" class="form-label">Plafond journalier souhaité (€)</label>
+                                    <input type="number" id="plafond-journalier" name="plafond-journalier" class="form-input" min="0" step="50">
+                                    <div class="error-message" id="plafond-journalier-error"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="plafond-mensuel" class="form-label">Plafond mensuel souhaité (€)</label>
+                                    <input type="number" id="plafond-mensuel" name="plafond-mensuel" class="form-input" min="0" step="100">
+                                    <div class="error-message" id="plafond-mensuel-error"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="motif" class="form-label">Motif de la demande *</label>
+                                <textarea id="motif" name="motif" class="form-textarea" rows="4" required placeholder="Décrivez le motif de votre demande de carte..."></textarea>
+                                <div class="error-message" id="motif-error"></div>
+                            </div>
+                        </div>
+
+                        <!-- Compte Bancaire -->
+                        <div class="form-section">
+                            <h3 class="section-title">Compte Bancaire</h3>
+                            <div class="form-group">
+                                <label for="numero-compte" class="form-label">Numéro de compte (si existant)</label>
+                                <input type="text" id="numero-compte" name="numero-compte" class="form-input">
+                                <div class="error-message" id="numero-compte-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="type-compte" class="form-label">Type de compte associé</label>
+                                <select id="type-compte" name="type-compte" class="form-select">
+                                    <option value="">Choisissez une option</option>
+                                    <option value="compte-courant">Compte Courant</option>
+                                    <option value="compte-epargne">Compte Épargne</option>
+                                    <option value="compte-professionnel">Compte Professionnel</option>
+                                    <option value="nouveau-compte">Nouveau compte à ouvrir</option>
+                                </select>
+                                <div class="error-message" id="type-compte-error"></div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Conditions -->
+                        <div class="form-section">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="conditions" name="conditions" class="form-checkbox" required>
+                                <label for="conditions" class="checkbox-label">
+                                    J'accepte les <a href="#" class="link">conditions générales</a> et la <a href="#" class="link">politique de confidentialité</a> *
+                                </label>
+                            </div>
+                            <div class="error-message" id="conditions-error"></div>
+                        </div>
+                    </div>
+
+                    <!-- Actions du formulaire -->
+                    <div class="form-actions">
+                        <button type="button" onclick="window.history.back()" class="btn btn-outline">
+                            <i class="fas fa-arrow-left"></i>
+                            Retour
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Soumettre la demande
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-university"></i>
+                        <span>MyBankManager</span>
+                    </div>
+                    <p>Votre partenaire bancaire de confiance pour tous vos projets financiers.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="comptes.html">Comptes bancaires</a></li>
+                        <li><a href="cartes.html">Cartes bancaires</a></li>
+                        <li><a href="prets.html">Prêts et crédits</a></li>
+                        <li><a href="assurances.html">Assurances</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="about.html">À propos</a></li>
+                        <li><a href="#">Aide</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Suivez-nous</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 MyBankManager. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="auth-unified.js"></script>
+    <script src="demande-carte-script.js"></script>
+</body>
+</html>

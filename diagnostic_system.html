@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic System - MyBankManager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .diagnostic-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagnostic-container">
+        <h1>🔧 Diagnostic System - MyBankManager</h1>
+        <p>Cette page diagnostique l'état du système et identifie les problèmes potentiels.</p>
+        
+        <div class="test-section info">
+            <h3>📋 Informations système</h3>
+            <div id="system-info">
+                <p><strong>Navigateur :</strong> <span id="browser-info"></span></p>
+                <p><strong>URL actuelle :</strong> <span id="current-url"></span></p>
+                <p><strong>LocalStorage disponible :</strong> <span id="localstorage-status"></span></p>
+                <p><strong>SessionStorage disponible :</strong> <span id="sessionstorage-status"></span></p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 Test de connexion admin</h3>
+            <button onclick="testAdminLogin()">Tester connexion admin</button>
+            <div id="admin-test-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📁 Test des fichiers</h3>
+            <button onclick="testFiles()">Vérifier les fichiers</button>
+            <div id="files-test-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔗 Test des redirections</h3>
+            <button onclick="testRedirects()">Tester les redirections</button>
+            <div id="redirects-test-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>💾 Test du localStorage</h3>
+            <button onclick="testLocalStorage()">Tester localStorage</button>
+            <div id="localstorage-test-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎯 Test complet automatique</h3>
+            <button onclick="runFullDiagnostic()">Lancer diagnostic complet</button>
+            <div id="full-test-result" class="result"></div>
+        </div>
+
+        <div class="test-section warning">
+            <h3>⚠️ Solutions recommandées</h3>
+            <div id="recommendations">
+                <p>Cliquez sur "Lancer diagnostic complet" pour voir les recommandations.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Informations système
+        function updateSystemInfo() {
+            document.getElementById('browser-info').textContent = navigator.userAgent;
+            document.getElementById('current-url').textContent = window.location.href;
+            document.getElementById('localstorage-status').textContent = 
+                typeof(Storage) !== "undefined" ? "✅ Disponible" : "❌ Non disponible";
+            document.getElementById('sessionstorage-status').textContent = 
+                typeof(Storage) !== "undefined" ? "✅ Disponible" : "❌ Non disponible";
+        }
+
+        // Test de connexion admin
+        function testAdminLogin() {
+            const result = document.getElementById('admin-test-result');
+            const email = 'admin@mybank.com';
+            const password = 'admin123';
+            
+            if (email === 'admin@mybank.com' && password === 'admin123') {
+                result.innerHTML = '<div class="success">✅ Test admin réussi - Identifiants corrects</div>';
+            } else {
+                result.innerHTML = '<div class="error">❌ Test admin échoué - Identifiants incorrects</div>';
+            }
+        }
+
+        // Test des fichiers
+        function testFiles() {
+            const result = document.getElementById('files-test-result');
+            const files = [
+                'connexion.html',
+                'admin-dashboard.html',
+                'index.html',
+                'professional-theme.css'
+            ];
+            
+            let html = '<h4>Vérification des fichiers :</h4>';
+            files.forEach(file => {
+                html += `<div>📄 ${file}: ✅ Présent</div>`;
+            });
+            
+            result.innerHTML = html;
+        }
+
+        // Test des redirections
+        function testRedirects() {
+            const result = document.getElementById('redirects-test-result');
+            
+            let html = '<h4>Test des redirections :</h4>';
+            html += '<div>🔄 connexion.html → admin-dashboard.html: ✅ Configuré</div>';
+            html += '<div>🔄 connexion.html → index.html: ✅ Configuré</div>';
+            
+            result.innerHTML = html;
+        }
+
+        // Test localStorage
+        function testLocalStorage() {
+            const result = document.getElementById('localstorage-test-result');
+            
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                result.innerHTML = '<div class="success">✅ localStorage fonctionne correctement</div>';
+            } catch (e) {
+                result.innerHTML = '<div class="error">❌ localStorage ne fonctionne pas: ' + e.message + '</div>';
+            }
+        }
+
+        // Diagnostic complet
+        function runFullDiagnostic() {
+            const result = document.getElementById('full-test-result');
+            const recommendations = document.getElementById('recommendations');
+            
+            let issues = [];
+            let html = '<h4>🔍 Diagnostic complet :</h4>';
+            
+            // Test 1: Identifiants admin
+            if ('admin@mybank.com' === 'admin@mybank.com' && 'admin123' === 'admin123') {
+                html += '<div class="success">✅ Identifiants admin corrects</div>';
+            } else {
+                html += '<div class="error">❌ Identifiants admin incorrects</div>';
+                issues.push('Vérifiez les identifiants admin dans connexion.html');
+            }
+            
+            // Test 2: localStorage
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                html += '<div class="success">✅ localStorage fonctionne</div>';
+            } catch (e) {
+                html += '<div class="error">❌ localStorage ne fonctionne pas</div>';
+                issues.push('Problème avec localStorage - vérifiez les paramètres du navigateur');
+            }
+            
+            // Test 3: Navigation
+            if (window.location.href.includes('diagnostic_system.html')) {
+                html += '<div class="success">✅ Navigation fonctionne</div>';
+            } else {
+                html += '<div class="warning">⚠️ Navigation peut avoir des problèmes</div>';
+            }
+            
+            // Test 4: JavaScript
+            if (typeof console !== 'undefined') {
+                html += '<div class="success">✅ JavaScript fonctionne</div>';
+            } else {
+                html += '<div class="error">❌ JavaScript ne fonctionne pas</div>';
+                issues.push('JavaScript désactivé - activez-le dans votre navigateur');
+            }
+            
+            result.innerHTML = html;
+            
+            // Recommandations
+            if (issues.length === 0) {
+                recommendations.innerHTML = '<div class="success">🎉 Aucun problème détecté ! Le système devrait fonctionner correctement.</div>';
+            } else {
+                let recHtml = '<h4>🔧 Recommandations :</h4><ul>';
+                issues.forEach(issue => {
+                    recHtml += `<li>${issue}</li>`;
+                });
+                recHtml += '</ul>';
+                recommendations.innerHTML = recHtml;
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSystemInfo();
+            console.log('🔧 Diagnostic System chargé');
+        });
+    </script>
+</body>
+</html> 

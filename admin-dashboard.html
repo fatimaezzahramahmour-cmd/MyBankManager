@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - MyBankManager</title>
+    <link rel="stylesheet" href="professional-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Protection d'accès admin - Version corrigée -->
+    <script>
+        // Vérification d'accès admin simplifiée
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            if (!currentUser) {
+                console.warn('Aucun utilisateur connecté');
+                return;
+            }
+            
+            const isAdmin = currentUser.email === 'admin@mybank.com' || 
+                           currentUser.email === 'admin@mybankmanager.com' ||
+                           currentUser.role === 'admin';
+            
+            if (!isAdmin) {
+                console.warn('Accès non autorisé');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            console.log('Accès admin confirmé');
+        });
+    </script>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <span>MyBankManager - Admin</span>
+                </div>
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li><a href="#dashboard" class="nav-link active" onclick="showSection('dashboard')">Dashboard</a></li>
+                        <li><a href="#users" class="nav-link" onclick="showSection('users')">Utilisateurs</a></li>
+                        <li><a href="#requests" class="nav-link" onclick="showSection('requests')">Demandes</a></li>
+                        <li><a href="#analytics" class="nav-link" onclick="showSection('analytics')">Analytics</a></li>
+                        <li><a href="#settings" class="nav-link" onclick="showSection('settings')">Paramètres</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <div class="admin-info">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Administrateur</span>
+                    </div>
+                    <button class="btn btn-outline" onclick="logoutAdmin()">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </button>
+                </div>
+                <div class="nav-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="admin-section active">
+            <!-- Hero Dashboard -->
+            <div class="admin-hero">
+                <div class="container">
+                    <div class="hero-content">
+                        <div class="hero-text">
+                            <h1 class="hero-title">Tableau de Bord Administratif</h1>
+                            <p class="hero-description">Surveillez et gérez l'activité de votre plateforme bancaire en temps réel</p>
+                            <div class="hero-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-users"></i>
+                                    <span id="total-users">0</span>
+                                    <label>Utilisateurs</label>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span id="pending-requests">0</span>
+                                    <label>En attente</label>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span id="growth-rate">+0%</span>
+                                    <label>Croissance</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hero-actions">
+                            <button class="btn btn-primary" onclick="refreshDashboard()">
+                                <i class="fas fa-sync-alt"></i> Actualiser
+                            </button>
+                            <button class="btn btn-outline" onclick="exportReport()">
+                                <i class="fas fa-download"></i> Exporter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <section class="quick-stats">
+                <div class="container">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="users-count">0</div>
+                                <div class="stat-label">Utilisateurs totaux</div>
+                                <div class="stat-change positive" id="users-change">+0 ce mois</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="requests-count">0</div>
+                                <div class="stat-label">Demandes totales</div>
+                                <div class="stat-change" id="requests-change">+0 ce mois</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="pending-count">0</div>
+                                <div class="stat-label">En attente</div>
+                                <div class="stat-change warning" id="pending-change">+0 ce mois</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="approved-count">0</div>
+                                <div class="stat-label">Approuvées</div>
+                                <div class="stat-change positive" id="approved-change">+0 ce mois</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="active-users">0</div>
+                                <div class="stat-label">Utilisateurs actifs</div>
+                                <div class="stat-change positive" id="active-change">+0 ce mois</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-user-times"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="inactive-users">0</div>
+                                <div class="stat-label">Utilisateurs inactifs</div>
+                                <div class="stat-change negative" id="inactive-change">+0 ce mois</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity -->
+            <section class="recent-activity">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">Activité Récente</h2>
+                        <p class="section-description">Dernières actions et demandes</p>
+                    </div>
+                    
+                    <div class="activity-grid">
+                        <div class="activity-card">
+                            <div class="activity-header">
+                                <h3><i class="fas fa-bell"></i> Notifications</h3>
+                            </div>
+                            <div class="activity-list" id="notifications-list">
+                                <!-- Notifications dynamiques -->
+                            </div>
+                        </div>
+                        
+                        <div class="activity-card">
+                            <div class="activity-header">
+                                <h3><i class="fas fa-chart-bar"></i> Graphique des demandes</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="requests-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- Users Section -->
+        <section id="users" class="admin-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Gestion des Utilisateurs</h2>
+                    <p class="section-description">Consultez et gérez tous les utilisateurs de la plateforme</p>
+                </div>
+                
+                <div class="users-controls">
+                    <div class="search-box">
+                        <input type="text" id="user-search" placeholder="Rechercher un utilisateur...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="filter-controls">
+                        <select id="user-status-filter">
+                            <option value="all">Tous les statuts</option>
+                            <option value="active">Actifs</option>
+                            <option value="inactive">Inactifs</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="exportUsers()">
+                            <i class="fas fa-download"></i> Exporter
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Utilisateur</th>
+                                <th>Email</th>
+                                <th>Dernière connexion</th>
+                                <th>Dernière activité</th>
+                                <th>Statut</th>
+                                <th>Demandes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- Utilisateurs dynamiques -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Requests Section -->
+        <section id="requests" class="admin-section">
+            <div class="container">
+                <!-- Header simple -->
+                <div class="requests-header">
+                    <div class="header-content">
+                        <div class="header-text">
+                            <h2 class="section-title">Gestion des Demandes</h2>
+                            <p class="section-description">Traitez et gérez toutes les demandes de services bancaires</p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Contrôles et filtres -->
+                <div class="requests-controls">
+                    <div class="controls-left">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="request-search" placeholder="Rechercher une demande...">
+                        </div>
+                        <div class="filter-group">
+                            <select id="status-filter" class="filter-select">
+                                <option value="all">Tous les statuts</option>
+                                <option value="en_attente">En attente</option>
+                                <option value="approuvee">Approuvées</option>
+                                <option value="refusee">Refusées</option>
+                            </select>
+                            <select id="type-filter" class="filter-select">
+                                <option value="all">Tous les types</option>
+                                <option value="pret">Prêts</option>
+                                <option value="carte">Cartes</option>
+                                <option value="assurance">Assurances</option>
+                            </select>
+                            <select id="date-filter" class="filter-select">
+                                <option value="all">Toutes les dates</option>
+                                <option value="today">Aujourd'hui</option>
+                                <option value="week">Cette semaine</option>
+                                <option value="month">Ce mois</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="controls-right">
+                        <button class="btn btn-outline" onclick="adminDashboard.exportRequests()">
+                            <i class="fas fa-download"></i> Exporter
+                        </button>
+                        <button class="btn btn-primary" onclick="adminDashboard.processAllRequests()">
+                            <i class="fas fa-check-double"></i> Traiter tout
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grille des demandes -->
+                <div class="requests-container">
+                    <div class="requests-grid" id="requests-grid">
+                        <!-- Demandes dynamiques -->
+                    </div>
+                    
+                    <!-- État vide -->
+                    <div id="empty-state" class="empty-state" style="display: none;">
+                        <div class="empty-icon">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <h3>Aucune demande trouvée</h3>
+                        <p>Aucune demande ne correspond à vos critères de recherche.</p>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <div class="pagination-info">
+                        <span id="pagination-info">Affichage de 1-10 sur 0 demandes</span>
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="btn btn-outline" id="prev-page" disabled>
+                            <i class="fas fa-chevron-left"></i> Précédent
+                        </button>
+                        <div class="page-numbers" id="page-numbers">
+                            <!-- Numéros de page -->
+                        </div>
+                        <button class="btn btn-outline" id="next-page" disabled>
+                            Suivant <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="admin-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Analytics et Rapports</h2>
+                    <p class="section-description">Analysez les performances et générez des rapports</p>
+                </div>
+                
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3><i class="fas fa-chart-line"></i> Évolution des inscriptions</h3>
+                        <div class="chart-container">
+                            <canvas id="registrations-chart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3><i class="fas fa-chart-pie"></i> Répartition des demandes</h3>
+                        <div class="chart-container">
+                            <canvas id="requests-pie-chart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3><i class="fas fa-chart-bar"></i> Performance mensuelle</h3>
+                        <div class="chart-container">
+                            <canvas id="performance-chart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3><i class="fas fa-table"></i> Statistiques détaillées</h3>
+                        <div class="stats-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Métrique</th>
+                                        <th>Valeur</th>
+                                        <th>Évolution</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stats-table-body">
+                                    <!-- Statistiques dynamiques -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="admin-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Paramètres Administratifs</h2>
+                    <p class="section-description">Configurez les paramètres de la plateforme</p>
+                </div>
+                
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h3><i class="fas fa-shield-alt"></i> Sécurité</h3>
+                        <div class="settings-form">
+                            <div class="form-group">
+                                <label>Session timeout (minutes)</label>
+                                <input type="number" id="session-timeout" value="30">
+                            </div>
+                            <div class="form-group">
+                                <label>Nombre max de tentatives de connexion</label>
+                                <input type="number" id="max-login-attempts" value="5">
+                            </div>
+                            <button class="btn btn-primary" onclick="saveSecuritySettings()">
+                                <i class="fas fa-save"></i> Sauvegarder
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h3><i class="fas fa-bell"></i> Notifications</h3>
+                        <div class="settings-form">
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="email-notifications" checked>
+                                    Notifications par email
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="sms-notifications">
+                                    Notifications SMS
+                                </label>
+                            </div>
+                            <button class="btn btn-primary" onclick="saveNotificationSettings()">
+                                <i class="fas fa-save"></i> Sauvegarder
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h3><i class="fas fa-database"></i> Maintenance</h3>
+                        <div class="settings-form">
+                            <div class="form-group">
+                                <label>Mode maintenance</label>
+                                <select id="maintenance-mode">
+                                    <option value="off">Désactivé</option>
+                                    <option value="on">Activé</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Message de maintenance</label>
+                                <textarea id="maintenance-message" rows="3">Site en maintenance temporaire</textarea>
+                            </div>
+                            <button class="btn btn-primary" onclick="saveMaintenanceSettings()">
+                                <i class="fas fa-save"></i> Sauvegarder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-university"></i>
+                        <span>MyBankManager</span>
+                    </div>
+                    <p>Plateforme d'administration bancaire sécurisée et moderne.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Administration</h4>
+                    <ul>
+                        <li><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#users">Utilisateurs</a></li>
+                        <li><a href="#requests">Demandes</a></li>
+                        <li><a href="#analytics">Analytics</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="about.html">À propos</a></li>
+                        <li><a href="#settings">Paramètres</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Sécurité</h4>
+                    <div class="security-info">
+                        <p><i class="fas fa-shield-alt"></i> Session sécurisée</p>
+                        <p><i class="fas fa-user-shield"></i> Accès admin uniquement</p>
+                        <p><i class="fas fa-clock"></i> Dernière connexion: <span id="last-login">Maintenant</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 MyBankManager. Tous droits réservés. | Dashboard Administratif</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="admin-dashboard-fixed.js"></script>
+</body>
+</html> 

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Statuts Demandes</title>
+    <link rel="stylesheet" href="professional-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .chart-container {
+            height: 400px;
+            margin: 1rem 0;
+        }
+        .status {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        
+        .demandes-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .demande-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            background: #f9f9f9;
+        }
+        .demande-card.en_attente { border-left: 4px solid #FFC107; }
+        .demande-card.accepté { border-left: 4px solid #4CAF50; }
+        .demande-card.refusé { border-left: 4px solid #F44336; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test Statuts des Demandes</h1>
+        
+        <div class="test-section">
+            <h2>📊 Graphique de Répartition</h2>
+            <div id="chart-status"></div>
+            <div class="chart-container">
+                <canvas id="requests-pie-chart"></canvas>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📋 Demandes de Test</h2>
+            <div id="demandes-display"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔧 Actions de Test</h2>
+            <button onclick="createTestDemandes()" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Créer des demandes de test
+            </button>
+            <button onclick="updateChart()" class="btn btn-outline">
+                <i class="fas fa-sync"></i> Mettre à jour le graphique
+            </button>
+            <button onclick="addRandomDemande()" class="btn btn-outline">
+                <i class="fas fa-random"></i> Ajouter une demande aléatoire
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let chart = null;
+
+        // Données de test avec différents formats de statut
+        const testDemandes = [
+            {
+                id: 1,
+                type: 'pret',
+                status: 'en_attente',
+                statut: 'en_attente',
+                userName: 'Ahmed Benali',
+                email: 'ahmed@example.com',
+                date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                montant: '50000'
+            },
+            {
+                id: 2,
+                type: 'carte',
+                status: 'accepté',
+                statut: 'accepté',
+                userName: 'Fatima Zahra',
+                email: 'fatima@example.com',
+                date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                typeCarte: 'Visa Gold'
+            },
+            {
+                id: 3,
+                type: 'assurance',
+                status: 'refusé',
+                statut: 'refusé',
+                userName: 'Mohammed Alami',
+                email: 'mohammed@example.com',
+                date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+                typeAssurance: 'Vie'
+            },
+            {
+                id: 4,
+                type: 'pret',
+                status: 'pending', // Format anglais
+                statut: 'pending',
+                userName: 'Amina Tazi',
+                email: 'amina@example.com',
+                date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+                montant: '30000'
+            },
+            {
+                id: 5,
+                type: 'carte',
+                status: 'approved', // Format anglais
+                statut: 'approved',
+                userName: 'Omar Benjelloun',
+                email: 'omar@example.com',
+                date: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
+                typeCarte: 'Mastercard'
+            },
+            {
+                id: 6,
+                type: 'assurance',
+                status: 'rejected', // Format anglais
+                statut: 'rejected',
+                userName: 'Khadija Alami',
+                email: 'khadija@example.com',
+                date: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
+                typeAssurance: 'Auto'
+            }
+        ];
+
+        function createTestDemandes() {
+            localStorage.setItem('admin-demandes', JSON.stringify(testDemandes));
+            updateStatus('Demandes de test créées avec succès', 'success');
+            displayDemandes();
+            updateChart();
+        }
+
+        function updateChart() {
+            const requests = JSON.parse(localStorage.getItem('admin-demandes') || '[]');
+            const data = getRequestsByStatus(requests);
+            
+            if (chart) {
+                chart.destroy();
+            }
+            
+            const ctx = document.getElementById('requests-pie-chart');
+            chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.values,
+                        backgroundColor: ['#FFC107', '#4CAF50', '#F44336', '#2196F3'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            updateStatus('Graphique mis à jour avec succès', 'success');
+        }
+
+        function addRandomDemande() {
+            const statuts = ['en_attente', 'accepté', 'refusé'];
+            const types = ['pret', 'carte', 'assurance'];
+            const noms = ['Youssef', 'Aicha', 'Hassan', 'Nadia', 'Karim'];
+            
+            const newDemande = {
+                id: Date.now(),
+                type: types[Math.floor(Math.random() * types.length)],
+                status: statuts[Math.floor(Math.random() * statuts.length)],
+                statut: statuts[Math.floor(Math.random() * statuts.length)],
+                userName: noms[Math.floor(Math.random() * noms.length)] + ' ' + 'Test',
+                email: 'test' + Date.now() + '@example.com',
+                date: new Date().toISOString()
+            };
+            
+            const requests = JSON.parse(localStorage.getItem('admin-demandes') || '[]');
+            requests.push(newDemande);
+            localStorage.setItem('admin-demandes', JSON.stringify(requests));
+            
+            updateStatus(`Nouvelle demande ajoutée: ${newDemande.type} - ${newDemande.status}`, 'info');
+            displayDemandes();
+            updateChart();
+        }
+
+        function getRequestsByStatus(requests) {
+            const statusCounts = {
+                'En attente': 0,
+                'Approuvées': 0,
+                'Refusées': 0,
+                'Autres': 0
+            };
+            
+            console.log('📊 Analyse des statuts des demandes:', requests.map(r => ({ id: r.id, status: r.status, statut: r.statut })));
+            
+            requests.forEach(request => {
+                // Vérifier les différents formats de statut possibles
+                const status = request.status || request.statut || 'en_attente';
+                console.log(`📝 Demande ${request.id}: status="${request.status}", statut="${request.statut}" -> final="${status}"`);
+                
+                switch (status.toLowerCase()) {
+                    case 'pending':
+                    case 'en_attente':
+                    case 'en attente':
+                        statusCounts['En attente']++;
+                        break;
+                    case 'approved':
+                    case 'accepté':
+                    case 'approuvé':
+                    case 'approuvee':
+                        statusCounts['Approuvées']++;
+                        break;
+                    case 'rejected':
+                    case 'refusé':
+                    case 'refusee':
+                        statusCounts['Refusées']++;
+                        break;
+                    default:
+                        console.log(`⚠️ Statut non reconnu: "${status}" pour la demande ${request.id}`);
+                        statusCounts['Autres']++;
+                }
+            });
+            
+            console.log('📈 Répartition finale:', statusCounts);
+            
+            return {
+                labels: Object.keys(statusCounts),
+                values: Object.values(statusCounts)
+            };
+        }
+
+        function displayDemandes() {
+            const requests = JSON.parse(localStorage.getItem('admin-demandes') || '[]');
+            const container = document.getElementById('demandes-display');
+            
+            if (requests.length === 0) {
+                container.innerHTML = '<p>Aucune demande trouvée</p>';
+                return;
+            }
+            
+            let html = '<div class="demandes-list">';
+            requests.forEach(request => {
+                const status = request.status || request.statut || 'en_attente';
+                html += `
+                    <div class="demande-card ${status}">
+                        <h4>Demande #${request.id}</h4>
+                        <p><strong>Type:</strong> ${request.type}</p>
+                        <p><strong>Client:</strong> ${request.userName}</p>
+                        <p><strong>Status:</strong> ${request.status}</p>
+                        <p><strong>Statut:</strong> ${request.statut}</p>
+                        <p><strong>Date:</strong> ${new Date(request.date).toLocaleDateString('fr-FR')}</p>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('chart-status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 Test Statuts Demandes initialisé');
+            createTestDemandes();
+        });
+    </script>
+</body>
+</html>
+

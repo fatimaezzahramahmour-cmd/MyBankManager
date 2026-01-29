@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Utilisateurs Existants - MyBankManager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .user-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .user-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .user-card h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        .user-card p {
+            margin: 2px 0;
+            font-size: 12px;
+        }
+        .test-btn {
+            background: #28a745;
+            font-size: 11px;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test des Utilisateurs Existants</h1>
+    
+    <div class="container">
+        <h2>1. État du Système</h2>
+        <div class="test-section info">
+            <button onclick="checkSystemStatus()">Vérifier l'État du Système</button>
+            <div id="system-status" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>2. Utilisateurs dans localStorage</h2>
+        <div class="test-section">
+            <button onclick="checkLocalStorageUsers()">Vérifier localStorage</button>
+            <div id="localstorage-users" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>3. Test de Connexion API</h2>
+        <div class="test-section">
+            <input type="text" id="test-email" placeholder="Email à tester" value="">
+            <input type="password" id="test-password" placeholder="Mot de passe" value="">
+            <button onclick="testUserLogin()">Tester la Connexion</button>
+            <div id="login-test-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>4. Test de Tous les Utilisateurs</h2>
+        <div class="test-section">
+            <button onclick="testAllUsers()">Tester Tous les Utilisateurs</button>
+            <div id="all-users-test" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>5. Créer un Utilisateur de Test</h2>
+        <div class="test-section">
+            <input type="text" id="new-email" placeholder="Email" value="test@example.com">
+            <input type="text" id="new-name" placeholder="Nom complet" value="Utilisateur Test">
+            <input type="password" id="new-password" placeholder="Mot de passe" value="password123">
+            <button onclick="createTestUser()">Créer Utilisateur de Test</button>
+            <div id="create-user-result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>6. Nettoyer le Système</h2>
+        <div class="test-section warning">
+            <button onclick="clearSystem()">Nettoyer localStorage</button>
+            <button onclick="resetSystem()">Réinitialiser le Système</button>
+            <div id="cleanup-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8081';
+
+        async function checkSystemStatus() {
+            const resultDiv = document.getElementById('system-status');
+            resultDiv.textContent = '🔄 Vérification en cours...';
+            resultDiv.className = 'result info';
+
+            try {
+                // Test API
+                const apiResponse = await fetch(`${API_BASE}/api/auth/test`);
+                const apiData = await apiResponse.json();
+                
+                // Vérifier localStorage
+                const currentUser = localStorage.getItem('currentUser');
+                const authToken = localStorage.getItem('authToken');
+                const users = localStorage.getItem('users');
+                
+                let result = '📊 État du Système:\n\n';
+                result += `API Backend: ${apiResponse.ok ? '✅ Connecté' : '❌ Erreur'}\n`;
+                result += `Utilisateur connecté: ${currentUser ? '✅ Oui' : '❌ Non'}\n`;
+                result += `Token d'auth: ${authToken ? '✅ Présent' : '❌ Absent'}\n`;
+                result += `Liste utilisateurs: ${users ? '✅ Présente' : '❌ Absente'}\n\n`;
+                
+                if (users) {
+                    try {
+                        const usersList = JSON.parse(users);
+                        result += `Nombre d'utilisateurs en localStorage: ${usersList.length}\n`;
+                    } catch (e) {
+                        result += `Erreur parsing users: ${e.message}\n`;
+                    }
+                }
+                
+                if (currentUser) {
+                    try {
+                        const user = JSON.parse(currentUser);
+                        result += `\nUtilisateur actuel: ${user.email} (${user.fullName})\n`;
+                    } catch (e) {
+                        result += `Erreur parsing currentUser: ${e.message}\n`;
+                    }
+                }
+                
+                resultDiv.textContent = result;
+                resultDiv.className = 'result success';
+                
+            } catch (error) {
+                resultDiv.textContent = `❌ Erreur: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        function checkLocalStorageUsers() {
+            const resultDiv = document.getElementById('localstorage-users');
+            const users = localStorage.getItem('users');
+            
+            if (!users) {
+                resultDiv.textContent = '❌ Aucun utilisateur dans localStorage';
+                resultDiv.className = 'result error';
+                return;
+            }
+            
+            try {
+                const usersList = JSON.parse(users);
+                let result = `📋 Utilisateurs dans localStorage (${usersList.length}):\n\n`;
+                
+                usersList.forEach((user, index) => {
+                    result += `${index + 1}. ${user.email}\n`;
+                    result += `   Nom: ${user.fullName || user.nom || 'Non défini'}\n`;
+                    result += `   Rôle: ${user.role || 'client'}\n`;
+                    result += `   ID: ${user.id}\n\n`;
+                });
+                
+                resultDiv.textContent = result;
+                resultDiv.className = 'result info';
+                
+            } catch (e) {
+                resultDiv.textContent = `❌ Erreur parsing: ${e.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testUserLogin() {
+            const resultDiv = document.getElementById('login-test-result');
+            const email = document.getElementById('test-email').value;
+            const password = document.getElementById('test-password').value;
+            
+            if (!email || !password) {
+                resultDiv.textContent = '❌ Veuillez remplir email et mot de passe';
+                resultDiv.className = 'result error';
+                return;
+            }
+            
+            resultDiv.textContent = '🔄 Test de connexion en cours...';
+            resultDiv.className = 'result info';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    resultDiv.textContent = `✅ Connexion réussie!\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.textContent = `❌ Échec de connexion: ${data.message}\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ Erreur: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testAllUsers() {
+            const resultDiv = document.getElementById('all-users-test');
+            const users = localStorage.getItem('users');
+            
+            if (!users) {
+                resultDiv.textContent = '❌ Aucun utilisateur à tester';
+                resultDiv.className = 'result error';
+                return;
+            }
+            
+            try {
+                const usersList = JSON.parse(users);
+                resultDiv.textContent = '🔄 Test de tous les utilisateurs...\n\n';
+                resultDiv.className = 'result info';
+                
+                let results = [];
+                
+                for (const user of usersList) {
+                    try {
+                        const response = await fetch(`${API_BASE}/api/auth/login`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                email: user.email, 
+                                password: 'password123' // Mot de passe par défaut
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok && data.success) {
+                            results.push(`✅ ${user.email}: Connexion réussie`);
+                        } else {
+                            results.push(`❌ ${user.email}: ${data.message}`);
+                        }
+                    } catch (error) {
+                        results.push(`❌ ${user.email}: Erreur - ${error.message}`);
+                    }
+                    
+                    // Mettre à jour l'affichage en temps réel
+                    resultDiv.textContent = '🔄 Test de tous les utilisateurs...\n\n' + results.join('\n');
+                }
+                
+                resultDiv.className = 'result success';
+                
+            } catch (e) {
+                resultDiv.textContent = `❌ Erreur: ${e.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function createTestUser() {
+            const resultDiv = document.getElementById('create-user-result');
+            const email = document.getElementById('new-email').value;
+            const name = document.getElementById('new-name').value;
+            const password = document.getElementById('new-password').value;
+            
+            if (!email || !name || !password) {
+                resultDiv.textContent = '❌ Veuillez remplir tous les champs';
+                resultDiv.className = 'result error';
+                return;
+            }
+            
+            resultDiv.textContent = '🔄 Création de l\'utilisateur...';
+            resultDiv.className = 'result info';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        fullName: name,
+                        password: password,
+                        confirmPassword: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    resultDiv.textContent = `✅ Utilisateur créé!\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result success';
+                    
+                    // Mettre à jour la liste des utilisateurs
+                    setTimeout(checkLocalStorageUsers, 1000);
+                } else {
+                    resultDiv.textContent = `❌ Erreur création: ${data.message}\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `❌ Erreur: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        function clearSystem() {
+            const resultDiv = document.getElementById('cleanup-result');
+            
+            // Nettoyer localStorage
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('users');
+            localStorage.removeItem('userEmail');
+            
+            resultDiv.textContent = '✅ localStorage nettoyé';
+            resultDiv.className = 'result success';
+            
+            // Recharger les vérifications
+            setTimeout(() => {
+                checkSystemStatus();
+                checkLocalStorageUsers();
+            }, 500);
+        }
+
+        function resetSystem() {
+            const resultDiv = document.getElementById('cleanup-result');
+            
+            // Nettoyer localStorage
+            clearSystem();
+            
+            // Créer un utilisateur de test par défaut
+            setTimeout(async () => {
+                try {
+                    const response = await fetch(`${API_BASE}/api/auth/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: 'test@example.com',
+                            fullName: 'Utilisateur Test',
+                            password: 'password123',
+                            confirmPassword: 'password123'
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        resultDiv.textContent += '\n✅ Utilisateur de test créé';
+                    }
+                } catch (error) {
+                    resultDiv.textContent += '\n⚠️ Erreur création utilisateur test';
+                }
+            }, 1000);
+        }
+
+        // Test automatique au chargement
+        window.addEventListener('load', () => {
+            setTimeout(checkSystemStatus, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Auth XHR - MyBankManager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .test-form {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+        }
+        .btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #218838;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.3);
+        }
+        .success {
+            border: 1px solid #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+        .error {
+            border: 1px solid #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
+        .info {
+            border: 1px solid #17a2b8;
+            background: rgba(23, 162, 184, 0.1);
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.online {
+            background: #28a745;
+            color: white;
+        }
+        .status.offline {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Test Auth XHR - MyBankManager</h1>
+        <p>Test spécifique des requêtes XHR d'authentification</p>
+        
+        <div class="test-form">
+            <h2>🌐 Configuration</h2>
+            <p><strong>Backend URL:</strong> <code id="backend-url">http://localhost:8081</code></p>
+            <p><strong>Status:</strong> <span id="backend-status" class="status offline">Vérification...</span></p>
+            <button class="btn" onclick="checkBackend()">Vérifier Backend</button>
+            <div id="backend-result" class="result"></div>
+        </div>
+
+        <div class="test-form">
+            <h2>📝 Test d'Inscription</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="reg-name">Nom complet:</label>
+                    <input type="text" id="reg-name" name="name" value="Test User" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email:</label>
+                    <input type="email" id="reg-email" name="email" value="test@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Mot de passe:</label>
+                    <input type="password" id="reg-password" name="password" value="test123" required>
+                </div>
+                <button type="submit" class="btn">Tester Inscription</button>
+            </form>
+            <div id="register-result" class="result"></div>
+        </div>
+
+        <div class="test-form">
+            <h2>🔑 Test de Connexion</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email:</label>
+                    <input type="email" id="login-email" name="email" value="admin@mybankmanager.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Mot de passe:</label>
+                    <input type="password" id="login-password" name="password" value="admin123" required>
+                </div>
+                <button type="submit" class="btn">Tester Connexion</button>
+            </form>
+            <div id="login-result" class="result"></div>
+        </div>
+
+        <div class="test-form">
+            <h2>👤 Test Admin</h2>
+            <button class="btn" onclick="testAdminLogin()">Test Admin Login</button>
+            <button class="btn" onclick="testAdminDashboard()">Test Admin Dashboard</button>
+            <div id="admin-result" class="result"></div>
+        </div>
+
+        <div class="test-form">
+            <h2>🔄 Test SecureAuthManager</h2>
+            <button class="btn" onclick="testSecureAuth()">Tester SecureAuthManager</button>
+            <button class="btn btn-danger" onclick="clearLocalStorage()">Nettoyer localStorage</button>
+            <div id="secure-auth-result" class="result"></div>
+        </div>
+
+        <div class="test-form">
+            <h2>📊 État Actuel</h2>
+            <button class="btn" onclick="showCurrentState()">Afficher l'état</button>
+            <div id="state-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8081';
+        
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            
+            element.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            element.scrollTop = element.scrollHeight;
+        }
+
+        async function checkBackend() {
+            const statusElement = document.getElementById('backend-status');
+            const resultElement = document.getElementById('backend-result');
+            
+            resultElement.innerHTML = '';
+            log('backend-result', '🔍 Vérification du backend...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/test`);
+                if (response.ok) {
+                    const data = await response.json();
+                    statusElement.textContent = 'En ligne';
+                    statusElement.className = 'status online';
+                    log('backend-result', `✅ Backend connecté!`, 'success');
+                    log('backend-result', `📊 Réponse: ${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                statusElement.textContent = 'Hors ligne';
+                statusElement.className = 'status offline';
+                log('backend-result', `❌ Erreur: ${error.message}`, 'error');
+                log('backend-result', '💡 Vérifiez que le serveur est démarré: node simple_server.js', 'info');
+            }
+        }
+
+        // Test d'inscription
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultElement = document.getElementById('register-result');
+            resultElement.innerHTML = '';
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            log('register-result', '📝 Test d\'inscription...', 'info');
+            log('register-result', `📊 Données: ${JSON.stringify(data, null, 2)}`, 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/users/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    log('register-result', `✅ Inscription simulée réussie!`, 'success');
+                    log('register-result', `📊 Réponse: ${JSON.stringify(result, null, 2)}`, 'success');
+                } else {
+                    log('register-result', `❌ Erreur: ${response.status}`, 'error');
+                    log('register-result', `📊 Réponse: ${JSON.stringify(result, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                log('register-result', `❌ Erreur: ${error.message}`, 'error');
+            }
+        });
+
+        // Test de connexion
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultElement = document.getElementById('login-result');
+            resultElement.innerHTML = '';
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            log('login-result', '🔑 Test de connexion...', 'info');
+            log('login-result', `📊 Données: ${JSON.stringify(data, null, 2)}`, 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/users/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    log('login-result', `✅ Connexion réussie!`, 'success');
+                    log('login-result', `📊 Réponse: ${JSON.stringify(result, null, 2)}`, 'success');
+                    
+                    // Simuler le stockage en localStorage
+                    localStorage.setItem('auth_token', 'test-token-' + Date.now());
+                    localStorage.setItem('auth_user', JSON.stringify({
+                        email: data.email,
+                        name: 'Test User',
+                        role: data.email.includes('admin') ? 'ADMIN' : 'CLIENT'
+                    }));
+                    
+                    log('login-result', `💾 Données sauvegardées en localStorage`, 'success');
+                } else {
+                    log('login-result', `❌ Erreur: ${response.status}`, 'error');
+                    log('login-result', `📊 Réponse: ${JSON.stringify(result, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                log('login-result', `❌ Erreur: ${error.message}`, 'error');
+            }
+        });
+
+        async function testAdminLogin() {
+            const resultElement = document.getElementById('admin-result');
+            resultElement.innerHTML = '';
+            
+            log('admin-result', '👤 Test de connexion admin...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/users/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@mybankmanager.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    log('admin-result', `✅ Connexion admin réussie!`, 'success');
+                    log('admin-result', `📊 Réponse: ${JSON.stringify(result, null, 2)}`, 'success');
+                } else {
+                    log('admin-result', `❌ Erreur admin: ${response.status}`, 'error');
+                    log('admin-result', `📊 Réponse: ${JSON.stringify(result, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                log('admin-result', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAdminDashboard() {
+            const resultElement = document.getElementById('admin-result');
+            
+            log('admin-result', '📊 Test dashboard admin...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/dashboard`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    log('admin-result', `✅ Dashboard admin accessible!`, 'success');
+                    log('admin-result', `📊 Données: ${JSON.stringify(result, null, 2)}`, 'success');
+                } else {
+                    log('admin-result', `❌ Dashboard inaccessible: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log('admin-result', `❌ Erreur dashboard: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSecureAuth() {
+            const resultElement = document.getElementById('secure-auth-result');
+            resultElement.innerHTML = '';
+            
+            log('secure-auth-result', '🔄 Test SecureAuthManager...', 'info');
+            
+            // Vérifier si le script est chargé
+            if (typeof SecureAuthManager === 'undefined') {
+                log('secure-auth-result', `❌ SecureAuthManager non trouvé`, 'error');
+                log('secure-auth-result', `💡 Vérifiez que secure-auth-manager.js est chargé`, 'info');
+                return;
+            }
+            
+            try {
+                // Créer une instance
+                const authManager = new SecureAuthManager();
+                log('secure-auth-result', `✅ SecureAuthManager initialisé`, 'success');
+                
+                // Tester la connexion
+                const user = await authManager.login('test@example.com', 'test123');
+                log('secure-auth-result', `✅ Test de connexion réussi`, 'success');
+                log('secure-auth-result', `👤 Utilisateur: ${JSON.stringify(user, null, 2)}`, 'success');
+                
+            } catch (error) {
+                log('secure-auth-result', `❌ Erreur SecureAuthManager: ${error.message}`, 'error');
+            }
+        }
+
+        function clearLocalStorage() {
+            const resultElement = document.getElementById('secure-auth-result');
+            
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_user');
+            localStorage.removeItem('users');
+            localStorage.removeItem('admin-demandes');
+            
+            log('secure-auth-result', `🧹 localStorage nettoyé`, 'success');
+        }
+
+        function showCurrentState() {
+            const resultElement = document.getElementById('state-result');
+            resultElement.innerHTML = '';
+            
+            log('state-result', '📊 État actuel du système:', 'info');
+            
+            // État du localStorage
+            const authToken = localStorage.getItem('auth_token');
+            const authUser = localStorage.getItem('auth_user');
+            const users = localStorage.getItem('users');
+            const adminDemandes = localStorage.getItem('admin-demandes');
+            
+            log('state-result', `🔑 Auth Token: ${authToken ? 'Présent' : 'Absent'}`, authToken ? 'success' : 'error');
+            log('state-result', `👤 Auth User: ${authUser ? 'Présent' : 'Absent'}`, authUser ? 'success' : 'error');
+            log('state-result', `👥 Users: ${users ? 'Présent' : 'Absent'}`, users ? 'success' : 'error');
+            log('state-result', `📋 Admin Demandes: ${adminDemandes ? 'Présent' : 'Absent'}`, adminDemandes ? 'success' : 'error');
+            
+            if (authUser) {
+                try {
+                    const user = JSON.parse(authUser);
+                    log('state-result', `📊 Utilisateur connecté: ${JSON.stringify(user, null, 2)}`, 'success');
+                } catch (error) {
+                    log('state-result', `❌ Erreur parsing utilisateur: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        // Vérification automatique au chargement
+        window.addEventListener('load', () => {
+            setTimeout(checkBackend, 1000);
+        });
+    </script>
+</body>
+</html>

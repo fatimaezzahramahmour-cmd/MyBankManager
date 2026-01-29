@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Connexion - MyBankManager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .success { background: rgba(40, 167, 69, 0.8); }
+        .error { background: rgba(220, 53, 69, 0.8); }
+        .info { background: rgba(23, 162, 184, 0.8); }
+        button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        .result {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test de Connexion MyBankManager</h1>
+        
+        <div class="status info">
+            <strong>État :</strong> Vérification backend-frontend-MySQL
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <button onclick="testBackend()">🔍 Test Backend</button>
+            <button onclick="testDatabase()">🗄️ Test MySQL</button>
+            <button onclick="testAll()">🚀 Test Complet</button>
+            <button onclick="clearResults()">🗑️ Effacer</button>
+        </div>
+
+        <div id="results" class="result">
+Cliquez sur un bouton pour commencer les tests...
+        </div>
+
+        <div class="status info" style="margin-top: 30px;">
+            <strong>Configuration :</strong><br>
+            • Backend: http://localhost:8081<br>
+            • Base de données: MySQL (mybankdb)<br>
+            • Frontend: HTML/JavaScript
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8081';
+        
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            results.innerHTML += `[${timestamp}] ${icon} ${message}\n`;
+            results.scrollTop = results.scrollHeight;
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = 'Résultats effacés...\n';
+        }
+
+        async function testBackend() {
+            log('Test de connexion au backend...', 'info');
+            
+            try {
+                const response = await fetch(`${API_URL}/api/test`);
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`Backend connecté! ${data.message}`, 'success');
+                } else {
+                    log(`Erreur HTTP: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`Erreur: ${error.message}`, 'error');
+                log('💡 Vérifiez que le backend est démarré sur le port 8081', 'info');
+            }
+        }
+
+        async function testDatabase() {
+            log('Test de connexion à MySQL...', 'info');
+            
+            try {
+                const response = await fetch(`${API_URL}/api/users`);
+                if (response.ok) {
+                    log('MySQL accessible!', 'success');
+                } else {
+                    log('MySQL non accessible', 'error');
+                }
+            } catch (error) {
+                log(`Erreur MySQL: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAll() {
+            log('=== TEST COMPLET ===', 'info');
+            
+            const endpoints = [
+                { url: '/api/test', name: 'Test Backend' },
+                { url: '/api/users', name: 'Utilisateurs' },
+                { url: '/', name: 'Page d\'accueil' }
+            ];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(`${API_URL}${endpoint.url}`);
+                    if (response.ok) {
+                        log(`${endpoint.name}: OK`, 'success');
+                    } else {
+                        log(`${endpoint.name}: Erreur ${response.status}`, 'error');
+                    }
+                } catch (error) {
+                    log(`${endpoint.name}: ${error.message}`, 'error');
+                }
+            }
+            
+            log('=== FIN DU TEST ===', 'info');
+        }
+
+        // Test automatique au chargement
+        window.onload = function() {
+            log('🚀 Page de test chargée', 'info');
+            log('💡 Cliquez sur "Test Backend" pour vérifier', 'info');
+        };
+    </script>
+</body>
+</html> 

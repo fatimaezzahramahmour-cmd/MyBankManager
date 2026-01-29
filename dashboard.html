@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MyBankManager</title>
+    <link rel="stylesheet" href="professional-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <span>MyBankManager</span>
+                </div>
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Accueil</a></li>
+                        <li><a href="comptes.html" class="nav-link">Comptes</a></li>
+                        <li><a href="cartes.html" class="nav-link">Cartes</a></li>
+                        <li><a href="prets.html" class="nav-link">Prêts</a></li>
+                        <li><a href="assurances.html" class="nav-link">Assurances</a></li>
+                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <a href="dashboard.html" class="btn btn-primary active">Dashboard</a>
+                    <a href="connexion.html" class="btn btn-outline">Se déconnecter</a>
+                </div>
+                <div class="nav-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="dashboard-hero">
+                <div class="welcome-section">
+                    <h1>Bonjour, Ahmed ! 👋</h1>
+                    <p>Voici un aperçu de vos finances aujourd'hui</p>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Nouvelle transaction
+                        </button>
+                        <button class="btn btn-outline">
+                            <i class="fas fa-download"></i>
+                            Télécharger relevé
+                        </button>
+                    </div>
+                </div>
+                <div class="balance-card">
+                    <div class="balance-header">
+                        <h3>Solde Principal</h3>
+                        <i class="fas fa-eye-slash"></i>
+                    </div>
+                    <div class="balance-amount">125,430 MAD</div>
+                    <div class="balance-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +2,450 MAD ce mois
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Stats -->
+    <section class="dashboard-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">Cartes actives</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">2</div>
+                        <div class="stat-label">Prêts en cours</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Assurances actives</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">+12.5%</div>
+                        <div class="stat-label">Croissance épargne</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Charts -->
+    <section class="dashboard-charts">
+        <div class="container">
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-pie"></i> Répartition des dépenses</h3>
+                    <div class="chart-container">
+                        <canvas id="expenses-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-line"></i> Évolution du solde</h3>
+                    <div class="chart-container">
+                        <canvas id="balance-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Transactions -->
+    <section class="recent-transactions">
+        <div class="container">
+            <div class="section-header">
+                <h2>Transactions Récentes</h2>
+                <a href="#" class="btn btn-outline">Voir tout</a>
+            </div>
+            
+            <div class="transactions-list">
+                <div class="transaction-item">
+                    <div class="transaction-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">Carrefour</div>
+                        <div class="transaction-date">Aujourd'hui, 14:30</div>
+                    </div>
+                    <div class="transaction-amount negative">-245 MAD</div>
+                </div>
+                
+                <div class="transaction-item">
+                    <div class="transaction-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">Salaire</div>
+                        <div class="transaction-date">Hier, 09:15</div>
+                    </div>
+                    <div class="transaction-amount positive">+8,500 MAD</div>
+                </div>
+                
+                <div class="transaction-item">
+                    <div class="transaction-icon">
+                        <i class="fas fa-gas-pump"></i>
+                    </div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">Station Total</div>
+                        <div class="transaction-date">23/12/2024, 16:45</div>
+                    </div>
+                    <div class="transaction-amount negative">-180 MAD</div>
+                </div>
+                
+                <div class="transaction-item">
+                    <div class="transaction-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">Loyer</div>
+                        <div class="transaction-date">20/12/2024, 10:00</div>
+                    </div>
+                    <div class="transaction-amount negative">-3,200 MAD</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions-section">
+        <div class="container">
+            <h2>Actions Rapides</h2>
+            <div class="actions-grid">
+                <div class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3>Virement</h3>
+                    <p>Transférer de l'argent</p>
+                </div>
+                
+                <div class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Recharger</h3>
+                    <p>Recharger téléphone</p>
+                </div>
+                
+                <div class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <h3>Factures</h3>
+                    <p>Payer vos factures</p>
+                </div>
+                
+                <div class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Budget</h3>
+                    <p>Gérer votre budget</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-university"></i>
+                    MyBankManager
+                </div>
+                <div class="footer-links">
+                    <a href="index.html">Accueil</a>
+                    <a href="comptes.html">Comptes</a>
+                    <a href="cartes.html">Cartes</a>
+                    <a href="prets.html">Prêts</a>
+                    <a href="assurances.html">Assurances</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 MyBankManager. Tous droits réservés. Casablanca, Maroc</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="dashboard.js"></script>
+<script src="auth-manager.js"></script>`n</body>
+</html> 

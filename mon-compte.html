@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Compte - MyBankManager</title>
+    <link rel="stylesheet" href="professional-theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-university"></i>
+                    <span>MyBankManager</span>
+                </div>
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Accueil</a></li>
+                        <li><a href="comptes.html" class="nav-link">Comptes</a></li>
+                        <li><a href="cartes.html" class="nav-link">Cartes</a></li>
+                        <li><a href="prets.html" class="nav-link">Prêts</a></li>
+                        <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions" id="header-actions">
+                    <a href="connexion.html" class="btn btn-outline">Se connecter</a>
+                    <a href="inscription.html" class="btn btn-primary">S'inscrire</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section Mon Compte -->
+    <section class="demande-section">
+        <div class="container">
+            <div class="demande-container">
+                <div class="demande-header">
+                    <h1 class="demande-title">Mon Compte</h1>
+                    <p class="demande-description">Bienvenue dans votre espace personnel</p>
+                </div>
+
+                <!-- Informations de l'utilisateur -->
+                <div class="user-info-section">
+                    <div class="user-welcome">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="user-details">
+                            <h2 id="welcome-message">Bienvenue</h2>
+                            <p id="user-email">Chargement...</p>
+                            <p id="user-phone">Chargement...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mes Demandes -->
+                <div class="my-requests-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-list-alt"></i>
+                        Mes Demandes
+                    </h3>
+                    
+                    <div class="requests-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon pending">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number" id="pending-count">0</span>
+                                <span class="stat-label">En attente</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon approved">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number" id="approved-count">0</span>
+                                <span class="stat-label">Acceptées</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon rejected">
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number" id="rejected-count">0</span>
+                                <span class="stat-label">Refusées</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="requests-list" id="requests-list">
+                        <div class="loading-message">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Chargement de vos demandes...
+                        </div>
+                    </div>
+
+                    <div class="no-requests" id="no-requests" style="display: none;">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <h4>Aucune demande</h4>
+                            <p>Vous n'avez pas encore soumis de demandes.</p>
+                            <div class="action-buttons">
+                                <a href="demande-pret.html" class="btn btn-primary">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                    Demander un prêt
+                                </a>
+                                <a href="demande-carte.html" class="btn btn-outline">
+                                    <i class="fas fa-credit-card"></i>
+                                    Demander une carte
+                                </a>
+                                <a href="assurances.html" class="btn btn-outline">
+                                    <i class="fas fa-shield-alt"></i>
+                                    Demander une assurance
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions rapides -->
+                <div class="quick-actions-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-bolt"></i>
+                        Actions Rapides
+                    </h3>
+                    <div class="quick-actions-grid">
+                        <a href="demande-pret.html" class="quick-action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <h4>Demander un prêt</h4>
+                            <p>Financez vos projets avec nos prêts personnalisés</p>
+                        </a>
+                        <a href="demande-carte.html" class="quick-action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <h4>Demander une carte</h4>
+                            <p>Obtenez une carte bancaire adaptée à vos besoins</p>
+                        </a>
+                        <a href="assurances.html" class="quick-action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h4>Demander une assurance</h4>
+                            <p>Protégez-vous avec nos solutions d'assurance</p>
+                        </a>
+                        <a href="contact.html" class="quick-action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <h4>Support client</h4>
+                            <p>Contactez notre équipe pour toute assistance</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-university"></i>
+                        <span>MyBankManager</span>
+                    </div>
+                    <p>Votre partenaire bancaire de confiance pour tous vos projets financiers.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="comptes.html">Comptes bancaires</a></li>
+                        <li><a href="cartes.html">Cartes bancaires</a></li>
+                        <li><a href="prets.html">Prêts et crédits</a></li>
+                        <li><a href="assurances.html">Assurances</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="about.html">À propos</a></li>
+                        <li><a href="#">Aide</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Suivez-nous</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 MyBankManager. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="auth-unified.js"></script>
+    <script src="mon-compte-script.js"></script>
+</body>
+</html>
